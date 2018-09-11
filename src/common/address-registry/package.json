@@ -1,0 +1,6 @@
+{
+    "name": "address-registry",
+    "private": true,
+    "main": "address-registry.ts",
+    "types": "address-registry.ts"
+}

@@ -10,7 +10,7 @@ declare global {
     type ConfigUnits = Record<string, ConfigValue> | AppConfigUnit;
     type ApplicationConfig = Record<string, ConfigUnits>;
 
-    type AnyFunc = (...args: any[]) => Promise<any>;
+    type AnyFunc = (...args: any[]) => any;
 }
 
 export {};

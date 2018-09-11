@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "405196b3-4b26-4ef0-8132-2c88d3608cd9",
+		"name": "Berry Spreader",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{origin}}/api/status/{{user_token}}",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"api",
+						"status",
+						"{{user_token}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"coin\": \"BTC\",\n\t\"platform\": \"ios\",\n\t\"platform_token\": \"hr43543534tgfektj34k5l34kl5\",\n\t\"addresses\": [\n\t\t\"187gUoBzNsikjYeoT6VKB6hsuyois7R1B8\",\n\t\t\"157pnkJkivyeibGuh6PW7C3HhtPd4BpQHm\",\n\t\t\"1BFuAKejNPRGGthcr5AtKFTUz3ofCoSBfy\"\n\t]\n}"
+				},
+				"url": {
+					"raw": "{{origin}}/api/subscribe/{{user_token}}",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"api",
+						"subscribe",
+						"{{user_token}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unsbuscribe",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{origin}}/api/unsubscribe/{{user_token}}",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"api",
+						"unsubscribe",
+						"{{user_token}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5de8ca58-27ff-43ef-aa0a-b4ff71fabef2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f763a5ed-466d-455b-8d70-e9fd89878c42",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "515d34e5-cc41-4b48-9039-aade92ef3b19",
+			"key": "origin",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"id": "e69f7d2e-067a-43dc-a28f-ca1cd3b0b3ea",
+			"key": "user_token",
+			"value": "testtoken",
+			"type": "string"
+		}
+	]
+}

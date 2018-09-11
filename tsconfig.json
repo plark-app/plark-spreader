@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "skipLibCheck": true,
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -7,7 +8,6 @@
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
-        "jsx": "react",
         "target": "es5",
         "module": "esnext",
         "noEmitHelpers": true,
@@ -20,8 +20,7 @@
         "lib": [
             "es5",
             "es6",
-            "es2015",
-            "dom"
+            "es2015"
         ],
         "typeRoots": [
             "src/definitions",
@@ -29,6 +28,7 @@
         ]
     },
     "exclude": [
+        "./node_modules/**/*",
         "dest/",
         "src/**/*.spec.tsx",
         "src/**/*.story.tsx"
