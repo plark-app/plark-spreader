@@ -1,0 +1,6 @@
+{
+    "name": "api-router",
+    "private": true,
+    "main": "api-router.ts",
+    "types": "api-router.ts"
+}

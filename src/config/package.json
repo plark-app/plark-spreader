@@ -1,0 +1,6 @@
+{
+    "name": "config",
+    "private": true,
+    "main": "config.ts",
+    "types": "config.ts"
+}

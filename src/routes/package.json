@@ -1,0 +1,6 @@
+{
+    "name": "routes",
+    "private": true,
+    "main": "routes.ts",
+    "types": "routes.ts"
+}

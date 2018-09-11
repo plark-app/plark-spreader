@@ -1,0 +1,4 @@
+app:
+  host: spreader.berrywallet.io
+  port: 80
+  secure: true

@@ -1,0 +1,6 @@
+{
+    "name": "http-errors",
+    "private": true,
+    "main": "http-errors.ts",
+    "types": "http-errors.ts"
+}
