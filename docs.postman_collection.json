@@ -37,7 +37,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"coin\": \"BTC\",\n\t\"platform\": \"ios\",\n\t\"platform_token\": \"hr43543534tgfektj34k5l34kl5\",\n\t\"addresses\": [\n\t\t\"187gUoBzNsikjYeoT6VKB6hsuyois7R1B8\",\n\t\t\"157pnkJkivyeibGuh6PW7C3HhtPd4BpQHm\",\n\t\t\"1BFuAKejNPRGGthcr5AtKFTUz3ofCoSBfy\"\n\t]\n}"
+					"raw": "{\n\t\"coin\": \"BTC\",\n\t\"platform\": \"android\",\n\t\"platform_token\": \"hr43543534tgfektj34k5l34kl5\",\n\t\"addresses\": [\n\t\t\"187gUoBzNsikjYeoT6VKB6hsuyois7R1B8\",\n\t\t\"157pnkJkivyeibGuh6PW7C3HhtPd4BpQHm\",\n\t\t\"1BFuAKejNPRGGthcr5AtKFTUz3ofCoSBfy\",\n\t\t\"1N8QKqNuFGBNX318WTWnN7LDtBu9eDsGjQ\",\n\t\t\"1MeSV2f9hMLQysqc7bGQcA9V8SF1Mi2aRC\",\n\t\t\"1KFgzY5Ekvy5CzLpow31uX5Ja59Nq2NDvP\",\n\t\t\"1GXdT5pfM4t7E4CcjVMBMcBYenENDiqq93\",\n\t\t\"19zzpncZmGZfAVh7TGLesmeZF2fcauXgrx\",\n\t\t\"1Cud6K5gsnJ3Trc2Y2gbikbqBGmqPKTyb6\",\n\t\t\"1EqCK7mz8z47mzjHMB8Kfj7vRqqCi94K9y\",\n\t\t\"1FVpUkJ47TLG5StR8CQnZmwZu573SfRjUP\",\n\t\t\"1MUcJKHL7L4Eovk54T4SEsojkDe4iyUfBh\",\n\t\t\"15Vj5a3k7UjQwD9HUpFYjTVEcnHb2kWX4B\",\n\t\t\"1Nzreqw2qEj7ib5Q3qXHhZHHuEXQahZiJP\",\n\t\t\"1ArP1VvFT6VGwWh3tqXpgLXugzGKipLPoi\",\n\t\t\"19qUkeKMT4pCTeuj7sLDFRfADctEzmoUso\",\n\t\t\"14eMNggHS7aRcskrFpv1aaDKeqJ6ErLcqD\",\n\t\t\"1DFCiwEuskn2A2DZMEUNFfPnLpTqLo5oSa\",\n\t\t\"1HrJPH8ZYyXHorm2LAkuUVJL2ReF9fwTZA\",\n\t\t\"1BAdfksciqkSQuuY9aZfr1DHTbnRng8ebT\"\n\t]\n}"
 				},
 				"url": {
 					"raw": "{{origin}}/api/subscribe/{{user_token}}",
@@ -98,13 +98,13 @@
 	],
 	"variable": [
 		{
-			"id": "515d34e5-cc41-4b48-9039-aade92ef3b19",
+			"id": "56cf0b10-4105-48af-a3e0-0b2f5527b855",
 			"key": "origin",
 			"value": "http://localhost:8080",
 			"type": "string"
 		},
 		{
-			"id": "e69f7d2e-067a-43dc-a28f-ca1cd3b0b3ea",
+			"id": "cab58f8c-7cca-4337-bd32-cecaebbc2b25",
 			"key": "user_token",
 			"value": "testtoken",
 			"type": "string"

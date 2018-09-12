@@ -1,3 +1,4 @@
+import { find, map } from 'lodash';
 import { Coin } from '@berrywallet/core';
 
 export interface AddressRegistryInterface {
@@ -24,15 +25,33 @@ export class AddressRegistry implements AddressRegistryInterface {
         return addrReg[addr] || [];
     }
 
+    public getUserStatus(userToken: string): any {
+        return map(this.coinRegistry, (addrRegistry: AddressRegistryMap, coin: Coin.Unit) => {
+            return {
+                user_token: userToken,
+                coin: coin,
+                address: addrRegistry,
+            };
+        });
+    }
+
     public subscribe(coin: Coin.Unit, addresses: string[], params: SubscriptionParams): void {
         const addrReg = this.getAddressRegistry(coin);
 
         addresses.forEach((addr: string) => {
-            addrReg[addr] = [
-                ...addrReg[addr],
-                params,
-            ];
+            if (!addrReg[addr]) {
+                addrReg[addr] = [];
+            }
+
+            const existsSubscription = find(addrReg[addr], { platformToken: params.platformToken });
+            if (existsSubscription) {
+                return;
+            }
+
+            addrReg[addr].push(params);
         });
+
+        console.log('Subscribed');
     }
 
     public unsubscribeUser(userToken: string, platform?: Platform): void {

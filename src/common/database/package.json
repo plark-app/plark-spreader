@@ -1,0 +1,6 @@
+{
+    "name": "database",
+    "private": true,
+    "main": "database.ts",
+    "types": "database.ts"
+}

@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const webpack = require('webpack');
 
 const noop = function () {
@@ -49,7 +50,26 @@ function getDefinePlugin() {
     });
 }
 
+var nodeModules = {};
+fs.readdirSync('node_modules')
+    .filter(function (x) {
+        return ['.bin'].indexOf(x) === -1;
+    })
+    .forEach(function (mod) {
+        nodeModules[mod] = 'commonjs ' + mod;
+    });
+
 const serverConfig = {
+    entry: {
+        server: './src/server.ts'
+    },
+    target: 'node',
+    output: {
+        path: path.resolve(PATH_DEST),
+        filename: '[name].js',
+        publicPath: '/'
+    },
+    externals: nodeModules,
     resolve: {
         extensions: [".ts", ".js", ".json"],
         modules: [
@@ -60,6 +80,7 @@ const serverConfig = {
             routes: path.resolve(process.cwd(), 'src/routes'),
             config: path.resolve(process.cwd(), 'src/config'),
             common: path.resolve(process.cwd(), 'src/common'),
+            models: path.resolve(process.cwd(), 'src/models'),
             resources: path.resolve(process.cwd(), 'resources'),
         }
     },
@@ -81,20 +102,11 @@ const serverConfig = {
             errors: true
         }
     },
-
+    devtool: false,
     mode: isDev ? 'development' : 'production',
     stats: {
         children: false,
         chunks: false,
-    },
-    entry: {
-        server: './src/server.ts'
-    },
-    target: 'node',
-    output: {
-        path: path.resolve(PATH_DEST),
-        filename: '[name].js',
-        publicPath: '/'
     },
     plugins: [
         getDefinePlugin(),

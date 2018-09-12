@@ -7,7 +7,16 @@ declare global {
         secure: boolean;
     };
 
-    type ConfigUnits = Record<string, ConfigValue> | AppConfigUnit;
+    type DatabaseConfigUnit = {
+        dialect: 'mysql'|'sqlite'|'postgres'|'mssql';
+        username: string;
+        password: string;
+        host: string;
+        port: string;
+        database: string;
+    };
+
+    type ConfigUnits = Record<string, ConfigValue> | AppConfigUnit | DatabaseConfigUnit;
     type ApplicationConfig = Record<string, ConfigUnits>;
 
     type AnyFunc = (...args: any[]) => any;

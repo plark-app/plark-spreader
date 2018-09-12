@@ -1,0 +1,7 @@
+database:
+  dialect: postgres
+  database: berry
+  username: root
+  password: root
+  host: localhost
+  port: 5432

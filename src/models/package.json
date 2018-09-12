@@ -1,0 +1,6 @@
+{
+    "name": "models",
+    "private": true,
+    "main": "models.ts",
+    "types": "models.ts"
+}
