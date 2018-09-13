@@ -1,0 +1,6 @@
+{
+    "name": "coin",
+    "private": true,
+    "main": "coin.ts",
+    "types": "coin.ts"
+}

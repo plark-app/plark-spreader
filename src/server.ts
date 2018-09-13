@@ -6,7 +6,7 @@ import { db } from 'common/database';
 import { apiRouter } from 'routes';
 import { modelList } from 'models';
 
-
+import { coins } from 'common/coin';
 
 const expressApp = express();
 expressApp.set('port', config.get('app.port', 5005));
@@ -28,6 +28,8 @@ async function startApplication() {
             model.associate(modelList);
         }
     });
+
+    console.log(coins);
 
     expressApp.listen(expressApp.get('port'), () => {
         console.log(`Server is listening on port: ${expressApp.get('port')}`);

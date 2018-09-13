@@ -1,0 +1,6 @@
+{
+    "name": "coin-tracker",
+    "private": true,
+    "main": "coin-tracker.ts",
+    "types": "coin-tracker.ts"
+}

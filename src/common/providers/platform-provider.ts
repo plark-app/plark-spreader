@@ -1,5 +1,5 @@
 import { Coin } from '@berrywallet/core';
-import { PlatformModel } from 'models';
+import { AddressModel, PlatformModel } from 'models';
 import * as AddressProvider from './address-provider';
 
 export async function getUserPlatform(user: UserInstance, type: Platform, token: string): Promise<PlatformInstance> {
@@ -35,6 +35,7 @@ export async function resolveAddresses(platform: PlatformInstance, coin: Coin.Un
     return addrs;
 }
 
+
 export async function unsubscribeAddresses(platform: PlatformInstance, coin: Coin.Unit): Promise<void> {
     const existsAddresses = await platform.getAddresses({
         where: {
@@ -43,4 +44,20 @@ export async function unsubscribeAddresses(platform: PlatformInstance, coin: Coi
     });
 
     await platform.removeAddresses(existsAddresses);
+}
+
+
+export async function getPlatfromsOfAddress(coin: Coin.Unit, addr: string): Promise<PlatformInstance[]> {
+    const address = await AddressModel.find({
+        where: {
+            coin: coin,
+            address: addr,
+        },
+    });
+
+    if (!address) {
+        return [];
+    }
+
+    return address.getPlatforms();
 }

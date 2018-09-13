@@ -42,9 +42,11 @@ declare global {
     };
 
     type PlatformInstance = Instance<PlatformAttributes> & PlatformAttributes & {
+        Addresses?: AddressInstance[];
+
         getAddresses: BelongsToManyGetAssociationsMixin<AddressInstance>;
         setAddresses: BelongsToManySetAssociationsMixin<AddressInstance>;
-        addAddresses: BelongsToManyAddAssociationsMixin<AddressInstance[]>;
+        addAddresses: BelongsToManyAddAssociationsMixin<AddressInstance>;
         removeAddresses: BelongsToManyRemoveAssociationsMixin<AddressInstance>;
 
         getUser: BelongsToGetAssociationMixin<UserInstance>;
@@ -52,6 +54,6 @@ declare global {
     }
 
     type AddressInstance = Instance<AddressAttributes> & AddressAttributes & {
-        getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance[]>;
+        getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance>;
     }
 }
