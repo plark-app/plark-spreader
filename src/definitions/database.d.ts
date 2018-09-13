@@ -1,5 +1,18 @@
 import { Coin } from '@berrywallet/core';
-import { DataTypeAbstract, DefineAttributeColumnOptions, FindOptions, Instance } from 'sequelize';
+import {
+    Instance,
+
+    DataTypeAbstract,
+    DefineAttributeColumnOptions,
+
+    BelongsToManyGetAssociationsMixin,
+    BelongsToManySetAssociationsMixin,
+    BelongsToManyAddAssociationsMixin,
+    BelongsToManyRemoveAssociationsMixin,
+
+    BelongsToGetAssociationMixin,
+    BelongsToSetAssociationMixin,
+} from 'sequelize';
 
 declare global {
     type SequelizeAttributes<T extends { [key: string]: any }> = {
@@ -24,17 +37,21 @@ declare global {
     };
 
 
-    type UserInstance = Instance<UserAttributes> & {
-        getPlatforms(findOption?: FindOptions<PlatformAttributes>): Promise<PlatformInstance[]>;
+    type UserInstance = Instance<UserAttributes> & UserAttributes & {
+        getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance>;
     };
 
-    type PlatformInstance = Instance<PlatformAttributes> & {
-        getUser(findOption?: FindOptions<UserAttributes>): Promise<UserInstance>;
+    type PlatformInstance = Instance<PlatformAttributes> & PlatformAttributes & {
+        getAddresses: BelongsToManyGetAssociationsMixin<AddressInstance>;
+        setAddresses: BelongsToManySetAssociationsMixin<AddressInstance>;
+        addAddresses: BelongsToManyAddAssociationsMixin<AddressInstance[]>;
+        removeAddresses: BelongsToManyRemoveAssociationsMixin<AddressInstance>;
 
-        setAddresses(addresses: AddressInstance[]): Promise<AddressInstance[]>;
+        getUser: BelongsToGetAssociationMixin<UserInstance>;
+        setUser: BelongsToSetAssociationMixin<UserInstance>;
     }
 
-    type AddressInstance = Instance<AddressAttributes> & {
-        getPlatform(findOption?: FindOptions<PlatformAttributes>): Promise<PlatformInstance>;
+    type AddressInstance = Instance<AddressAttributes> & AddressAttributes & {
+        getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance[]>;
     }
 }

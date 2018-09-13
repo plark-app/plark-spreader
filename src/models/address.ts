@@ -23,6 +23,18 @@ export const AddressModel = db.define<AddressInstance, AddressAttributes>(
     { underscored: true },
 );
 
+/* Create an address__platforms table */
+db.define('address__platforms', {
+    address_id: {
+        type: Sequalize.INTEGER,
+    },
+    platform_id: {
+        type: Sequalize.INTEGER,
+    },
+}, {
+    underscored: true,
+});
+
 AddressModel.belongsToMany(PlatformModel, {
     as: 'Platforms',
     through: 'address__platforms',

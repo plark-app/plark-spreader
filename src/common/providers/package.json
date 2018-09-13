@@ -1,0 +1,6 @@
+{
+    "name": "providers",
+    "private": true,
+    "main": "providers.ts",
+    "types": "providers.ts"
+}

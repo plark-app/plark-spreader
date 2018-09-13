@@ -18,7 +18,7 @@ async function startApplication() {
     try {
         await db.sync();
     } catch (error) {
-        console.error('Cannot connect to database');
+        console.error('Cannot connect to database: ');
 
         throw error;
     }
@@ -42,5 +42,6 @@ async function startApplication() {
 }
 
 startApplication().catch((error) => {
-    console.error(error);
+    console.error(error.message);
+    console.log();
 });
