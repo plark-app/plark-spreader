@@ -7,6 +7,7 @@ const configPath = path.resolve(rootPath, './config/');
 
 config.loadYmlFile(path.resolve(configPath, 'app.yml'));
 config.loadYmlFile(path.resolve(configPath, 'database.yml'));
+config.loadYmlFile(path.resolve(configPath, 'tracker.yml'));
 
 // Loading .env.yml file from root repository
 config.loadYmlFile(path.resolve(rootPath, '.env.yml'));

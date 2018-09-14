@@ -1,2 +1,2 @@
-export { apiRouter } from './api-router';
+export { createApiRouter } from './api-router';
 

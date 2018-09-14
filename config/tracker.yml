@@ -1,0 +1,75 @@
+
+## ------------------------------------- ##
+##    Trackers configuration list        ##
+## ------------------------------------- ##
+
+tracker:
+
+  # Bitcoin
+  # Use service https://insight.bitpay.com
+  BTC:
+    type:       insight
+    apiUrl:     https://insight.bitpay.com/api
+    webSocket:  wss://insight.bitpay.com
+
+
+  # - Berrywallet Service -
+  #
+  # Litecoin
+  # Use service https://test.btc.explorer.berrywallet.io
+  LTC:
+    type:       insight
+    apiUrl:     https://ltc.explorer.berrywallet.io/api
+    webSocket:  wss://ltc.explorer.berrywallet.io
+
+
+  # DashCoin
+  # Use service https://dash-bitcore1.trezor.io
+  DASH:
+    type:       insight
+    apiUrl:     https://dash-bitcore1.trezor.io/api
+    webSocket:  https://dash-bitcore1.trezor.io
+
+
+  # Ethereum
+  # Use service https://infura.io
+  ETH:
+    type:       infura
+    apiUrl:     https://api.infura.io/v1/jsonrpc/mainnet
+
+
+
+
+  # - Berrywallet Service -
+  #
+  # Bitcoin Test
+  # Use service https://test.btc.explorer.berrywallet.io
+  BTCt:
+    type:       insight
+    apiUrl:     https://test.btc.explorer.berrywallet.io/api
+    webSocket:  wss://test.btc.explorer.berrywallet.io
+
+
+  # - Berrywallet Service -
+  #
+  # Litecoin Test
+  # Use service https://test.ltc.explorer.berrywallet.io
+  LTCt:
+    type:       insight
+    apiUrl:     https://test.ltc.explorer.berrywallet.io/api
+    webSocket:  wss://test.ltc.explorer.berrywallet.io
+
+
+  # DashCoin Test
+  # Use service https://testnet-insight.dashevo.org
+  DASHt:
+    type:       insight
+    apiUrl:     https://testnet-insight.dashevo.org/insight-api-dash
+    webSocket:  https://testnet-insight.dashevo.org
+
+
+  # Ethereum Ropsten Test
+  # Use service https://infura.io
+  ETHt:
+    type:       infura
+    apiUrl:     https://api.infura.io/v1/jsonrpc/ropsten

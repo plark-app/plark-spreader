@@ -1,16 +1,36 @@
 import { Coin } from '@berrywallet/core';
+import { EventEmitter } from 'events';
 
-interface CoinTracker {
-    coin: Coin.Unit;
+import { CoinTracker } from './types';
+import { CoinTrackerPool } from './tracker-pool';
+import { EthereumCoinTracker } from './ethereum-coin-tracker';
+import { BIPCoinTracker } from './bip-coin-tracker';
 
-    start(): Promise<void>;
-}
+
+export { CoinTracker, CoinTrackerPool };
 
 export function createTracker(coin: Coin.Unit): CoinTracker {
-    return {
-        coin: coin,
-        start: function () {
-            return Promise.resolve();
-        },
-    };
+    switch (coin) {
+        case Coin.Unit.ETH:
+        case Coin.Unit.ETHt:
+            return new EthereumCoinTracker(coin);
+
+        case Coin.Unit.BTC:
+        case Coin.Unit.BTCt:
+        case Coin.Unit.LTC:
+        case Coin.Unit.LTCt:
+        case Coin.Unit.DASH:
+        case Coin.Unit.DASHt:
+            return new BIPCoinTracker(coin);
+    }
+
+    throw new Error(`[${coin}] Can not create tracker`);
+}
+
+
+export async function startTransactionTracking(coinList: Coin.Unit[], eventEmitter: EventEmitter): Promise<CoinTrackerPool> {
+    const coinTrackerPool = new CoinTrackerPool(coinList, eventEmitter);
+    await coinTrackerPool.start();
+
+    return coinTrackerPool;
 }

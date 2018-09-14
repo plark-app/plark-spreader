@@ -1,0 +1,6 @@
+{
+    "name": "methods",
+    "private": true,
+    "main": "methods.ts",
+    "types": "methods.ts"
+}

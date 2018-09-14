@@ -1,18 +1,24 @@
 import express from 'express';
 import Sequelize from 'sequelize';
 import { forEach } from 'lodash';
-import { config } from 'config';
-import { db } from 'common/database';
-import { apiRouter } from 'routes';
-import { modelList } from 'models';
 
+import EventEmitter from 'events';
 import { coins } from 'common/coin';
+import { config } from 'config';
+import { createApiRouter } from 'routes';
+import { modelList } from 'models';
+import { db } from 'common/database';
+import { ConsoleColor } from 'common/console';
+
+import { startTransactionTracking } from 'common/coin-tracker';
 
 const expressApp = express();
 expressApp.set('port', config.get('app.port', 5005));
 expressApp.set('hostname', config.get('app.host', 'localhost'));
 
-expressApp.use('/api', apiRouter);
+const eventEmitter = new EventEmitter();
+
+expressApp.use('/api', createApiRouter(eventEmitter));
 
 async function startApplication() {
     try {
@@ -29,17 +35,20 @@ async function startApplication() {
         }
     });
 
-    console.log(coins);
+    await startTransactionTracking(coins, eventEmitter);
 
     expressApp.listen(expressApp.get('port'), () => {
-        console.log(`Server is listening on port: ${expressApp.get('port')}`);
+        console.log(`${ConsoleColor.FgYellow}Server is listening on port: ${expressApp.get('port')}`, ConsoleColor.Reset);
 
         console.log(
-            '  App is running at http://%s:%d in %s mode',
+            '%sApp is running at http://%s:%d in %s mode %s',
+            ConsoleColor.FgGreen,
             expressApp.get('hostname'),
             expressApp.get('port'),
             expressApp.get('env'),
+            ConsoleColor.Reset,
         );
+        console.log();
     });
 }
 
