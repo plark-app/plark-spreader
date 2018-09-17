@@ -1,4 +1,5 @@
 import { Coin } from '@berrywallet/core';
+import config from 'config';
 import { CoinTracker, TransactionHandler } from './types';
 
 export abstract class AbstractTracker implements CoinTracker {
@@ -7,7 +8,7 @@ export abstract class AbstractTracker implements CoinTracker {
     protected addresses: string[] = [];
     protected txHandler?: TransactionHandler;
 
-    public constructor(coin: Coin.Unit) {
+    protected constructor(coin: Coin.Unit) {
         this.coin = coin;
     }
 
@@ -42,4 +43,8 @@ export abstract class AbstractTracker implements CoinTracker {
             return;
         }
     };
+
+    protected getTrackerConfig(): undefined | Tracker.TrackerParams {
+        return config.get(`tracker.${this.coin}`);
+    }
 }

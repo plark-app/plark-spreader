@@ -1,6 +1,10 @@
+import { Coin } from '@berrywallet/core';
 import { AbstractTracker } from './abstract-tracker';
 
 export class EthereumCoinTracker extends AbstractTracker {
+    public constructor(coin: Coin.Unit) {
+        super(coin);
+    }
 
     public async start(): Promise<void> {
         await super.start();
