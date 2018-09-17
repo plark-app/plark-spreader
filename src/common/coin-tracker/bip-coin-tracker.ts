@@ -111,22 +111,21 @@ export class BIPCoinTracker extends AbstractTracker {
         console.log('TXID', transaction.getId());
 
         transaction.outs.forEach((out: BitcoinJS.Out) => {
-            const addr = this.getOutAddress(out);
+            const address = this.getOutAddress(out);
 
-            console.log(addr.type, addr.address || '--');
+            console.log(address);
         });
 
         console.log();
     };
 
-    protected getOutAddress(out: BitcoinJS.Out): { type: BitcoinJS.script.OutputScript, address?: string } {
+    protected getOutAddress(out: BitcoinJS.Out): string | undefined {
         const type = BitcoinJS.script.classifyOutput(out.script);
-        let address: string | undefined;
 
         if (availableTypes.indexOf(type) >= 0) {
-            address = BitcoinJS.address.fromOutputScript(out.script, this.coinNetwork);
+            return BitcoinJS.address.fromOutputScript(out.script, this.coinNetwork);
         }
 
-        return { type, address };
+        return undefined;
     }
 }
