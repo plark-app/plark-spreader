@@ -40,32 +40,60 @@ declare module 'bitcoinjs-lib' {
     }
 
     export class Block {
-        constructor(): Block;
+        version: number;
+        transactions: Transaction[];
+        prevHash: Buffer;
+        merkleRoot: Buffer;
+        timestamp: number;
+        bits: number;
+        nonce: number;
 
-        public static fromBuffer(buffer: Buffer): Block;
+        constructor();
 
-        public static fromHex(hex: string): Block;
+        byteLength(headersOnly?: boolean): number;
+
+        checkMerkleRoot(): any;
+
+        checkProofOfWork(): any;
+
+        getHash(): Buffer;
+
+        getId(): string;
+
+        getUTCDate(): any;
+
+        toBuffer(headersOnly?: boolean): Buffer;
+
+        toHex(headersOnly?: boolean): string;
+
+        static calculateMerkleRoot(transactions: Transaction[] | Array<{ getHash(): Buffer; }>): Buffer;
+
+        static calculateTarget(bits: number): Buffer;
+
+        static fromBuffer(buffer: Buffer): Block;
+
+        static fromHex(hex: string): Block;
     }
 
     export class Transaction {
-        public version: number;
-        public locktime: number;
-        public ins: In[];
-        public outs: Out[];
+        version: number;
+        locktime: number;
+        ins: In[];
+        outs: Out[];
 
-        public getId(): string;
+        getId(): string;
 
-        public getHash(): Buffer;
+        getHash(): Buffer;
 
-        public toBuffer(): Buffer;
+        toBuffer(): Buffer;
 
-        public setWitness(index: number, witness: Buffer[]): void;
+        setWitness(index: number, witness: Buffer[]): void;
 
-        public static fromBuffer(buffer: Buffer, __noStrict?: boolean): Transaction;
+        static fromBuffer(buffer: Buffer, __noStrict?: boolean): Transaction;
 
-        public static fromHex(hex: string): Transaction;
+        static fromHex(hex: string): Transaction;
 
-        public static isCoinbaseHash(buffer: Buffer): boolean;
+        static isCoinbaseHash(buffer: Buffer): boolean;
     }
 
     export class TransactionBuilder {

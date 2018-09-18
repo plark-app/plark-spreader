@@ -1,42 +1,38 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import SocketClient from 'socket.io-client';
 import { Coin } from '@berrywallet/core';
+import { InsightClient } from './explorer-clients';
 import { AbstractTracker } from './abstract-tracker';
-
-const availableTypes = [
-    "pubkeyhash",
-    "scripthash",
-    "multisig",
-    "pubkey",
-    "witnesspubkeyhash",
-    "witnessscripthash",
-];
 
 export class BIPCoinTracker extends AbstractTracker {
     protected socket?: SocketIOClient.Socket;
     protected connected: boolean = false;
     protected coinNetwork: BitcoinJS.Network;
+    protected client: InsightClient;
 
     public constructor(coin: Coin.Unit) {
         super(coin);
+
         this.coinNetwork = (Coin.makeCoin(this.coin) as Coin.BIPGenericCoin).networkInfo();
+        this.client = new InsightClient(coin);
     }
 
     public async start(): Promise<void> {
         await super.start();
 
         this.socket = await this.createSocketConnection();
-        this.bindSocketEvents();
 
-        console.log(`[${this.coin}]`, `Start track ${this.addresses.length} addrs`);
+        setTimeout(() => this.bindSocketEvents(), 500);
+
+        this.log('Start track', `${this.addresses.length} addrs`);
     }
 
 
     protected createSocketConnection = async (): Promise<SocketIOClient.Socket> => {
 
-        const config = this.getTrackerConfig();
+        const config = this.client.getTrackerParams();
 
-        if (!config || !config.webSocket) {
+        if (!config.webSocket) {
             throw new Error(`No webSocket URL for ${this.coin}`);
         }
 
@@ -53,12 +49,12 @@ export class BIPCoinTracker extends AbstractTracker {
             });
 
             socket.on('error', (error: Error) => {
-                console.log(`[${this.coin}] Error`, error);
+                this.log('Error', error);
                 reject(new Error(`[${this.coin}] Some Error`));
             });
 
             socket.on('connect_timeout', (error: Error) => {
-                console.log(`[${this.coin}] Timeout`, error);
+                this.log('Timeout', error);
                 reject(new Error(`[${this.coin}] Connection timeout`));
             });
         });
@@ -73,59 +69,31 @@ export class BIPCoinTracker extends AbstractTracker {
             return;
         }
 
-        this.socket.emit('subscribe', 'bitcoind/rawtransaction');
-        this.socket.emit('subscribe', 'bitcoind/hashblock');
+        this.socket.emit('subscribe', 'inv');
 
-        this.socket.on('bitcoind/rawtransaction', this.onHandleRawTransaction);
-        this.socket.on('bitcoind/hashblock', this.onHandleRawBlock);
-
-        //this.socket.emit('subscribe', 'inv');
-
-        //this.socket.on('block', this.onHandleBlock);
-        //this.socket.on('tx', this.onHandleTransaction);
+        this.socket.on('block', this.onHandleBlock);
+        this.socket.on('tx', this.onHandleTransaction);
     };
-
 
     protected onHandleBlock = async (blockHash: string) => {
-        console.log(`[${this.coin}]`, 'New block');
-        console.log(blockHash);
-        console.log();
+        const block = await this.client.getBlock(blockHash);
+
+        this.handleNewBlock(blockHash, block);
     };
 
-    protected onHandleTransaction = async (tx: any) => {
-        console.log(`[${this.coin}]`, 'New transaction');
-        console.log(tx.vout.map((obj: any) => Object.keys(obj)[0]).join(', '));
-        console.log();
-    };
-
-    protected onHandleRawBlock = async (data: any) => {
-        console.log(`[${this.coin}]`, 'New raw block');
-        console.log(data);
-        console.log();
-    };
-
-    protected onHandleRawTransaction = async (data: any) => {
-        console.log(`[${this.coin}]`, 'New raw transaction');
-        const transaction = BitcoinJS.Transaction.fromHex(data);
-
-        console.log('TXID', transaction.getId());
-
-        transaction.outs.forEach((out: BitcoinJS.Out) => {
-            const address = this.getOutAddress(out);
-
-            console.log(address);
+    protected onHandleTransaction = async (tx: Insight.InsightEventTransaction) => {
+        this.getAddresses(tx).forEach((address: string) => {
+            if (this.addresses.indexOf(address) >= 0) {
+                this.log(address, '[ V ]');
+            } else {
+                // this.log(address, '[ X ]');
+            }
         });
 
-        console.log();
+        this.handleNewTransaction(tx.txid);
     };
 
-    protected getOutAddress(out: BitcoinJS.Out): string | undefined {
-        const type = BitcoinJS.script.classifyOutput(out.script);
-
-        if (availableTypes.indexOf(type) >= 0) {
-            return BitcoinJS.address.fromOutputScript(out.script, this.coinNetwork);
-        }
-
-        return undefined;
+    protected getAddresses(tx: Insight.InsightEventTransaction): string[] {
+        return tx.vout.map((obj: any) => Object.keys(obj)[0]);
     }
 }

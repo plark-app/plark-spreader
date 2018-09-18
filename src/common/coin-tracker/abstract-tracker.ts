@@ -1,12 +1,15 @@
+import BitcoinJS from 'bitcoinjs-lib';
 import { Coin } from '@berrywallet/core';
-import config from 'config';
-import { CoinTracker, TransactionHandler } from './types';
+import { CoinTracker, TransactionHandler, LastItem } from './types';
 
 export abstract class AbstractTracker implements CoinTracker {
     protected coin: Coin.Unit;
     protected isActive: boolean = false;
     protected addresses: string[] = [];
     protected txHandler?: TransactionHandler;
+
+    protected lastTx?: LastItem;
+    protected lastBlock?: LastItem;
 
     protected constructor(coin: Coin.Unit) {
         this.coin = coin;
@@ -30,7 +33,7 @@ export abstract class AbstractTracker implements CoinTracker {
         this.addresses = addresses;
 
         if (this.isActive) {
-            console.log(`[${this.coin}] Changed addresses list (${oldCount} -> ${addresses.length})`);
+            this.log('Changed addresses list', `(${oldCount} -> ${addresses.length})`);
         }
     }
 
@@ -38,13 +41,43 @@ export abstract class AbstractTracker implements CoinTracker {
         this.txHandler = txHandler;
     }
 
-    protected handleNewTransaction = (): void => {
+    public getLastBlock(): LastItem | undefined {
+        return this.lastBlock;
+    }
+
+    public getLastTransaction(): LastItem | undefined {
+        return this.lastTx;
+    }
+
+    protected handleNewTransaction = (txid: string, _tx?: Infura.Transaction | BitcoinJS.Transaction): void => {
+        // this.log('New transaction', txid);
+
+        this.lastTx = {
+            hash: txid,
+            time: new Date(),
+            index: this.lastTx ? this.lastTx.index + 1 : 1
+        };
+
         if (!this.txHandler) {
             return;
         }
     };
 
-    protected getTrackerConfig(): undefined | Tracker.TrackerParams {
-        return config.get(`tracker.${this.coin}`);
+    protected handleNewBlock = (blockHash: string, _block?: Infura.Block | BitcoinJS.Block): void => {
+        // this.log('New block', blockHash);
+
+        this.lastBlock = {
+            hash: blockHash,
+            time: new Date(),
+            index: this.lastBlock ? this.lastBlock.index + 1 : 1
+        };
+
+        if (!this.txHandler) {
+            return;
+        }
+    };
+
+    protected log(eventName: string, ...data: any[]): void {
+        console.log(`[${this.coin}] [${eventName}]`, ...data);
     }
 }

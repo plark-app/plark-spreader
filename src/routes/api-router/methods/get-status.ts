@@ -32,8 +32,8 @@ export const getStatus = async (req: express.Request, res: express.Response, _ne
             groupBy(plt.Addresses, 'coin'),
             (addrs: AddressInstance[], coin: string) => {
                 responseData.push({
-                    ...platformInfo,
                     coin: coin,
+                    ...platformInfo,
                     addrs: addrs.map((addr: AddressInstance) => addr.address),
                 });
             },

@@ -1,0 +1,6 @@
+{
+    "name": "explorer-clients",
+    "private": true,
+    "main": "explorer-clients.ts",
+    "types": "explorer-clients.ts"
+}
