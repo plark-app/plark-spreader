@@ -13,7 +13,6 @@ export const deleteUnsubscribe = (eventEmitter: EventEmitter) => {
 
         let rules = {
             coin: ['required'],
-            platform: ['required', 'in:ios,android,chrome'],
             platform_token: ['required', 'min:8'],
         };
 
@@ -24,7 +23,13 @@ export const deleteUnsubscribe = (eventEmitter: EventEmitter) => {
         }
 
         const user = await UserProvider.getUser(userToken);
-        const platform = await PlatformProvider.getUserPlatform(user, data.platform, data.platform_token);
+        const platform = await PlatformProvider.findUserPlatform(user, data.platform_token);
+
+        if (!platform) {
+            res.status(204).send();
+
+            return;
+        }
 
         await PlatformProvider.unsubscribeAddresses(platform, data.coin);
 

@@ -25,7 +25,7 @@ export const postSubscribe = (eventEmitter: EventEmitter) => {
         }
 
         const user = await UserProvider.getUser(userToken);
-        const platform = await PlatformProvider.getUserPlatform(user, data.platform, data.platform_token);
+        const platform = await PlatformProvider.resolveUserPlatform(user, data.platform_token, data.platform);
         const newAddrs = await PlatformProvider.resolveAddresses(platform, data.coin, data.addresses);
 
         res.status(200).send({

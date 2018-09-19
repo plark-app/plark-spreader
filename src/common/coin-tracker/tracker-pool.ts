@@ -1,6 +1,7 @@
+import { EventEmitter } from 'events';
 import { map, debounce, forEach } from 'lodash';
 import { Coin } from '@berrywallet/core';
-import { EventEmitter } from 'events';
+import Table from 'cli-table';
 
 import { AddressProvider } from 'common/providers';
 import { ConsoleColor } from 'common/console';
@@ -45,35 +46,7 @@ export class CoinTrackerPool {
 
         await Promise.all(promisesList);
 
-        setInterval(() => {
-            clear();
-
-            const coinList: any = {};
-
-            forEach(this.trackers, (tracker: CoinTracker) => {
-                const row: any = {};
-
-                const lastBlock = tracker.getLastBlock();
-                if (lastBlock) {
-                    const blockSpendTime = (lastBlock.time.getTime() - this.startTime.getTime()) / (1000 * 60);
-                    row['Block Hash'] = lastBlock.hash;
-                    row['Block Time'] = lastBlock.time.toLocaleTimeString();
-                    row['Blocks / Min'] = Math.floor((lastBlock.index / blockSpendTime));
-                }
-
-                const lastTx = tracker.getLastTransaction();
-                if (lastTx) {
-                    const txSpendTime = (lastTx.time.getTime() - this.startTime.getTime()) / (1000 * 60);
-                    row['TX Hash'] = lastTx.hash;
-                    row['TX Time'] = lastTx.time.toLocaleTimeString();
-                    row['TXs / Min'] = Math.floor((lastTx.index / txSpendTime));
-                }
-
-                coinList[tracker.getCoin()] = row;
-            });
-
-            console.table(coinList);
-        }, 500);
+        setInterval(this.flushInterface, 500);
     }
 
     public getTracker(coin: Coin.Unit): CoinTracker {
@@ -93,5 +66,53 @@ export class CoinTrackerPool {
             const addrs = await CoinTrackerPool.getAddresses(coin);
             tracker.setAddresses(addrs);
         };
+    };
+
+    protected flushInterface = () => {
+        clear();
+
+        const table = new Table({
+            head: [
+                'Coin',
+                'Block Hash',
+                'Block Time',
+                'Blocks / Hour',
+                'TX Hash',
+                'TX Time',
+                'TXs / Min',
+            ],
+        });
+
+        forEach(this.trackers, (tracker: CoinTracker) => {
+            const row: any[] = [tracker.getCoin()];
+
+            const lastBlock = tracker.getLastBlock();
+            if (lastBlock) {
+                const blockSpendTime = (lastBlock.time.getTime() - this.startTime.getTime()) / (1000 * 60 * 60);
+                row.push(lastBlock.hash);
+                row.push(lastBlock.time.toLocaleTimeString());
+                row.push(Math.floor((lastBlock.index / blockSpendTime)));
+            } else {
+                row.push(' -- ');
+                row.push(' -- ');
+                row.push(' -- ');
+            }
+
+            const lastTx = tracker.getLastTransaction();
+            if (lastTx) {
+                const txSpendTime = (lastTx.time.getTime() - this.startTime.getTime()) / (1000 * 60);
+                row.push(lastTx.hash);
+                row.push(lastTx.time.toLocaleTimeString());
+                row.push(Math.floor((lastTx.index / txSpendTime)));
+            } else {
+                row.push(' -- ');
+                row.push(' -- ');
+                row.push(' -- ');
+            }
+
+            table.push(row);
+        });
+
+        console.log(table.toString());
     };
 }

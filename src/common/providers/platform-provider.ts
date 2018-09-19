@@ -2,13 +2,22 @@ import { Coin } from '@berrywallet/core';
 import { AddressModel, PlatformModel } from 'models';
 import * as AddressProvider from './address-provider';
 
-export async function getUserPlatform(user: UserInstance, type: Platform, token: string): Promise<PlatformInstance> {
+export async function findUserPlatform(user: UserInstance, token: string): Promise<PlatformInstance | undefined> {
     let [platform] = await user.getPlatforms({
         where: {
-            type: type,
             token: token,
         },
     });
+
+    if (!platform) {
+        return;
+    }
+
+    return platform;
+}
+
+export async function resolveUserPlatform(user: UserInstance, token: string, type: Platform): Promise<PlatformInstance> {
+    const platform = await findUserPlatform(user, token);
 
     if (platform) {
         return platform;
