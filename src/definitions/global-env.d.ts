@@ -22,7 +22,11 @@ declare global {
         }
     };
 
-    type ConfigUnits = Record<string, ConfigValue> | AppConfigUnit | DatabaseConfigUnit | TrackerConfigUnit;
+    type FirebaseConfigUnit = {
+        [key: string]: string;
+    };
+
+    type ConfigUnits = Record<string, ConfigValue> | AppConfigUnit | DatabaseConfigUnit | TrackerConfigUnit | FirebaseConfigUnit;
     type ApplicationConfig = Record<string, ConfigUnits>;
 
     type AnyFunc = (...args: any[]) => any;

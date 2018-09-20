@@ -19,11 +19,7 @@ export class ConfigRegistry<T extends object = object> {
     }
 
     public loadYmlFile(filePath: string): void {
-        try {
-            const configValue = yaml.safeLoad(fs.readFileSync(filePath, 'utf8'));
-            this.merge(configValue);
-        } catch (error) {
-            console.error(error);
-        }
+        const configValue = yaml.safeLoad(fs.readFileSync(filePath, 'utf8'));
+        this.merge(configValue);
     }
 }
