@@ -1,23 +1,23 @@
 import { EventEmitter } from 'events';
-import { map, debounce, forEach } from 'lodash';
+import { map, debounce } from 'lodash';
 import { Coin } from '@berrywallet/core';
-import Table from 'cli-table';
+import { Events } from 'common/events';
 
 import { AddressProvider } from 'common/providers';
 import { ConsoleColor } from 'common/console';
 import { createTracker } from 'common/coin-tracker/coin-tracker';
-import { CoinTracker } from 'common/coin-tracker/types';
-
-const clear = require('clear');
+import { CoinTracker, TransactionHandler, TransactionInfo } from 'common/coin-tracker/types';
 
 
 export class CoinTrackerPool {
     protected trackers: Record<Coin.Unit, CoinTracker>;
     protected startTime: Date;
+    protected eventEmitter: EventEmitter;
 
     public constructor(coinList: Coin.Unit[], eventEmitter: EventEmitter) {
         this.trackers = {} as Record<Coin.Unit, CoinTracker>;
         this.startTime = new Date();
+        this.eventEmitter = eventEmitter;
 
         coinList.forEach((coin: Coin.Unit) => {
             try {
@@ -27,7 +27,7 @@ export class CoinTrackerPool {
                 return;
             }
 
-            eventEmitter.on(`update-coin:${coin}`, debounce(this.updateAddressList(coin), 500));
+            eventEmitter.on(`${Events.UpdateCoin}:${coin}`, debounce(this.updateAddressList(coin), 500));
         });
     }
 
@@ -37,6 +37,7 @@ export class CoinTrackerPool {
             tracker.setAddresses(addrs);
 
             try {
+                tracker.onReceiveTransaction(this.handleTransaction);
                 return await tracker.start();
             } catch (error) {
                 console.log(`${ConsoleColor.FgRed}${error.message}${ConsoleColor.Reset}`);
@@ -45,8 +46,6 @@ export class CoinTrackerPool {
         });
 
         await Promise.all(promisesList);
-
-        setInterval(this.flushInterface, 500);
     }
 
     public getTracker(coin: Coin.Unit): CoinTracker {
@@ -68,51 +67,7 @@ export class CoinTrackerPool {
         };
     };
 
-    protected flushInterface = () => {
-        clear();
-
-        const table = new Table({
-            head: [
-                'Coin',
-                'Block Hash',
-                'Block Time',
-                'Blocks / Hour',
-                'TX Hash',
-                'TX Time',
-                'TXs / Min',
-            ],
-        });
-
-        forEach(this.trackers, (tracker: CoinTracker) => {
-            const row: any[] = [tracker.getCoin()];
-
-            const lastBlock = tracker.getLastBlock();
-            if (lastBlock) {
-                const blockSpendTime = (lastBlock.time.getTime() - this.startTime.getTime()) / (1000 * 60 * 60);
-                row.push(lastBlock.hash);
-                row.push(lastBlock.time.toLocaleTimeString());
-                row.push(Math.floor((lastBlock.index / blockSpendTime)));
-            } else {
-                row.push(' -- ');
-                row.push(' -- ');
-                row.push(' -- ');
-            }
-
-            const lastTx = tracker.getLastTransaction();
-            if (lastTx) {
-                const txSpendTime = (lastTx.time.getTime() - this.startTime.getTime()) / (1000 * 60);
-                row.push(lastTx.hash);
-                row.push(lastTx.time.toLocaleTimeString());
-                row.push(Math.floor((lastTx.index / txSpendTime)));
-            } else {
-                row.push(' -- ');
-                row.push(' -- ');
-                row.push(' -- ');
-            }
-
-            table.push(row);
-        });
-
-        console.log(table.toString());
+    protected handleTransaction: TransactionHandler = (coin: Coin.Unit, addresses: string[], txInfo: TransactionInfo) => {
+        this.eventEmitter.emit(Events.HandleTX, coin, addresses, txInfo);
     };
 }

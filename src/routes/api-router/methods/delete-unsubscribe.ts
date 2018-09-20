@@ -4,6 +4,7 @@ import Validator from 'validatorjs';
 import { ValidationError } from 'common/http-errors';
 import { UserProvider, PlatformProvider } from 'common/providers';
 import { EventEmitter } from 'events';
+import { Events } from 'common/events';
 
 export const deleteUnsubscribe = (eventEmitter: EventEmitter) => {
     return async (req: express.Request, res: express.Response, _next: AnyFunc) => {
@@ -35,6 +36,6 @@ export const deleteUnsubscribe = (eventEmitter: EventEmitter) => {
 
         res.status(204).send();
 
-        eventEmitter.emit(`update-coin:${data.coin}`);
+        eventEmitter.emit(`${Events.UpdateCoin}:${data.coin}`);
     };
 };

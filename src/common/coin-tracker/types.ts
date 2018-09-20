@@ -5,12 +5,6 @@ export type TransactionInfo = {
     [key: string]: any;
 }
 
-export type LastItem = {
-    hash: string;
-    time: Date;
-    index: number;
-}
-
 export type TransactionHandler = (coin: Coin.Unit, addresses: string[], transactionInfo: TransactionInfo) => void;
 
 export interface CoinTracker {
@@ -21,8 +15,4 @@ export interface CoinTracker {
     setAddresses(addresses: string[]): void;
 
     onReceiveTransaction(txHandler: TransactionHandler): void;
-
-    getLastBlock(): LastItem | undefined;
-
-    getLastTransaction(): LastItem | undefined;
 }

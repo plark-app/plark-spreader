@@ -73,20 +73,24 @@ export class EthereumCoinTracker extends AbstractTracker {
     };
 
     protected onHandleTx = (tx: Infura.Transaction) => {
-        this.handleNewTransaction(tx.hash, tx);
+
+        const addresses = [];
 
         if (this.addresses.indexOf(tx.from) >= 0) {
-            this.log('From', tx.from);
+            addresses.push(tx.from);
         }
 
         if (this.addresses.indexOf(tx.to) >= 0) {
-            this.log('To', tx.to);
+            addresses.push(tx.to);
+        }
+
+        if (addresses.length > 0) {
+            this.emitTransactionListener(tx.hash, addresses, tx);
         }
     };
 
     protected onHandleBlock = (block: Infura.Block) => {
         this.setCurrentBlock(block);
-        this.handleNewBlock(block.hash, block);
 
         block.transactions.forEach((tx: Infura.Transaction) => {
             this.onHandleTx(tx);

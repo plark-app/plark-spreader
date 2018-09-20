@@ -1,6 +1,8 @@
 import { Coin } from '@berrywallet/core';
 import { AddressModel, PlatformModel } from 'models';
 import * as AddressProvider from './address-provider';
+import Sequelize from 'sequelize';
+
 
 export async function findUserPlatform(user: UserInstance, token: string): Promise<PlatformInstance | undefined> {
     let [platform] = await user.getPlatforms({
@@ -15,6 +17,7 @@ export async function findUserPlatform(user: UserInstance, token: string): Promi
 
     return platform;
 }
+
 
 export async function resolveUserPlatform(user: UserInstance, token: string, type: Platform): Promise<PlatformInstance> {
     const platform = await findUserPlatform(user, token);
@@ -69,4 +72,21 @@ export async function getPlatfromsOfAddress(coin: Coin.Unit, addr: string): Prom
     }
 
     return address.getPlatforms();
+}
+
+
+export async function getPlatformsOfAddresses(coin: Coin.Unit, addresses: string[]): Promise<PlatformInstance[]> {
+    return await PlatformModel.findAll({
+        include: [{
+            model: AddressModel,
+            as: 'Addresses',
+            required: true,
+            where: {
+                coin: coin,
+                address: {
+                    [Sequelize.Op.in]: addresses,
+                },
+            },
+        }],
+    });
 }

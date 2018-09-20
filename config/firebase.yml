@@ -1,7 +1,7 @@
 firebase:
 
 
-  admin_config:
+  admin_cert:
     type: "service_account"
     auth_uri: "https://accounts.google.com/o/oauth2/auth"
     token_uri: "https://oauth2.googleapis.com/token"
@@ -9,7 +9,7 @@ firebase:
 
     project_id: '<need to implement key>'
     private_key_id: '<need to implement key>'
-    private_key: >
+    private_key: |+
       -----BEGIN PRIVATE KEY-----
       Need implement PRIVATE KEY !
       -----END PRIVATE KEY-----

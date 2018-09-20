@@ -78,19 +78,23 @@ export class BIPCoinTracker extends AbstractTracker {
     protected onHandleBlock = async (blockHash: string) => {
         const block = await this.client.getBlock(blockHash);
 
-        this.handleNewBlock(blockHash, block);
+        block.transactions.forEach((_tx: BitcoinJS.Transaction) => {
+
+        });
     };
 
     protected onHandleTransaction = async (tx: Insight.InsightEventTransaction) => {
+        const handledAddresses: string[] = [];
+
         this.getAddresses(tx).forEach((address: string) => {
             if (this.addresses.indexOf(address) >= 0) {
-                this.log(address, '[ V ]');
-            } else {
-                // this.log(address, '[ X ]');
+                handledAddresses.push(address);
             }
         });
 
-        this.handleNewTransaction(tx.txid);
+        if (handledAddresses.length > 0) {
+            this.emitTransactionListener(tx.txid, handledAddresses);
+        }
     };
 
     protected getAddresses(tx: Insight.InsightEventTransaction): string[] {

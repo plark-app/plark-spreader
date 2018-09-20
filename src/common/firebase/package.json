@@ -1,0 +1,6 @@
+{
+    "name": "firebase",
+    "private": true,
+    "main": "firebase.ts",
+    "types": "firebase.ts"
+}

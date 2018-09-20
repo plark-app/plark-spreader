@@ -2,21 +2,20 @@ import express from 'express';
 import Sequelize from 'sequelize';
 import { forEach } from 'lodash';
 
-import EventEmitter from 'events';
 import { coins } from 'common/coin';
 import { config } from 'config';
 import { createApiRouter } from 'routes';
 import { modelList } from 'models';
 import { db } from 'common/database';
 import { ConsoleColor } from 'common/console';
+import { configureFirebase, BerryNotifier } from 'common/firebase';
+import { eventEmitter } from 'common/events';
 
 import { startTransactionTracking } from 'common/coin-tracker';
 
 const expressApp = express();
 expressApp.set('port', config.get('app.port', 5005));
 expressApp.set('hostname', config.get('app.host', 'localhost'));
-
-const eventEmitter = new EventEmitter();
 
 expressApp.use('/api', createApiRouter(eventEmitter));
 
@@ -34,6 +33,9 @@ async function startApplication() {
             model.associate(modelList);
         }
     });
+
+    const admin = configureFirebase();
+    new BerryNotifier(admin, eventEmitter);
 
     await startTransactionTracking(coins, eventEmitter);
 

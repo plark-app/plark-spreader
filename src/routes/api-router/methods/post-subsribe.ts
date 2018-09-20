@@ -1,9 +1,11 @@
 import express from 'express';
+import { EventEmitter } from 'events';
 import Validator from 'validatorjs';
+
 import { ValidationError } from 'common/http-errors';
 import { UserProvider, PlatformProvider } from 'common/providers';
+import { Events } from 'common/events';
 
-import { EventEmitter } from 'events';
 
 export const postSubscribe = (eventEmitter: EventEmitter) => {
     return async (req: express.Request, res: express.Response, _next: AnyFunc) => {
@@ -33,6 +35,6 @@ export const postSubscribe = (eventEmitter: EventEmitter) => {
             addresses: newAddrs,
         });
 
-        eventEmitter.emit(`update-coin:${data.coin}`);
-    }
+        eventEmitter.emit(`${Events.UpdateCoin}:${data.coin}`);
+    };
 };

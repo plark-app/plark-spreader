@@ -1,3 +1,5 @@
+import { ServiceAccount } from 'firebase-admin';
+
 declare global {
     type ConfigValue = object | string | number | null | undefined;
 
@@ -22,11 +24,21 @@ declare global {
         }
     };
 
-    type FirebaseConfigUnit = {
+    type FirebaseAdminCert = ServiceAccount & {
         [key: string]: string;
     };
 
-    type ConfigUnits = Record<string, ConfigValue> | AppConfigUnit | DatabaseConfigUnit | TrackerConfigUnit | FirebaseConfigUnit;
+    type FirebaseConfigUnit = {
+        admin_cert: FirebaseAdminCert
+    };
+
+    type ConfigUnits =
+        Record<string, ConfigValue>
+        | AppConfigUnit
+        | DatabaseConfigUnit
+        | TrackerConfigUnit
+        | FirebaseConfigUnit;
+
     type ApplicationConfig = Record<string, ConfigUnits>;
 
     type AnyFunc = (...args: any[]) => any;
