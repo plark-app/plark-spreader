@@ -1,7 +1,7 @@
 import admin, { messaging, app } from 'firebase-admin';
 import { config } from 'config';
 
-export { BerryNotifier } from './berry-notifier';
+export { PlarkNotifier } from './plark-notifier';
 
 export const configureFirebase = (): app.App => {
 
@@ -30,8 +30,6 @@ export const sendTestMessage = async (app: app.App): Promise<void> => {
         "It46XGqG6xwBPptpaNPH7ONrEBTjJAZynwu6-D" +
         "LTZVX17iwhOJCl92SSdtpFpkIV5W1EtJk_d4Ax" +
         "U-tcB70F4Ph22HIVpBhZbMkwjgN7gn6TaaRR2b";
-
-    // const FAIL_TOKEN = 'terswfwjio3irwe';
 
     const message: messaging.Message = {
         data: {

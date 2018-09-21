@@ -8,7 +8,7 @@ import { createApiRouter } from 'routes';
 import { modelList } from 'models';
 import { db } from 'common/database';
 import { ConsoleColor } from 'common/console';
-import { configureFirebase, BerryNotifier } from 'common/firebase';
+import { configureFirebase, PlarkNotifier } from 'common/firebase';
 import { eventEmitter } from 'common/events';
 
 import { startTransactionTracking } from 'common/coin-tracker';
@@ -35,7 +35,7 @@ async function startApplication() {
     });
 
     const admin = configureFirebase();
-    new BerryNotifier(admin, eventEmitter);
+    new PlarkNotifier(admin, eventEmitter);
 
     await startTransactionTracking(coins, eventEmitter);
 

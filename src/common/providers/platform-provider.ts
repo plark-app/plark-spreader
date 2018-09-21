@@ -75,7 +75,7 @@ export async function getPlatfromsOfAddress(coin: Coin.Unit, addr: string): Prom
 }
 
 
-export async function getPlatformsOfAddresses(coin: Coin.Unit, addresses: string[]): Promise<PlatformInstance[]> {
+export async function getPlatformsOfAddresses(coin: Coin.Unit, addresses: string[], _onlyActive: boolean = false): Promise<PlatformInstance[]> {
     return await PlatformModel.findAll({
         include: [{
             model: AddressModel,

@@ -1,16 +1,16 @@
 import { EventEmitter } from 'events';
+import { app, messaging } from 'firebase-admin';
 import { Coin } from '@berrywallet/core';
-import { app } from 'firebase-admin';
 
-import { PlatformProvider } from 'common/providers';
 import { TransactionInfo } from 'common/coin-tracker/types';
 import { Events } from 'common/events';
+import { MessageBuilder } from './message-builder';
 
 
-export class BerryNotifier {
-
+export class PlarkNotifier {
     protected firebaseApp: app.App;
     protected eventEmitter: EventEmitter;
+
 
     public constructor(firebaseApp: app.App, eventEmitter: EventEmitter) {
         this.firebaseApp = firebaseApp;
@@ -18,6 +18,7 @@ export class BerryNotifier {
 
         this.eventEmitter.on(Events.HandleTX, this.handleTransaction);
     }
+
 
     protected handleTransaction = async (coin: Coin.Unit, addresses: string[], txInfo: TransactionInfo): Promise<void> => {
         console.log(' ------------------------------------------------------------------ ');
@@ -27,8 +28,20 @@ export class BerryNotifier {
         console.log(txInfo);
         console.log(' ------------------------------------------------------------------ ');
 
-        const platforms = await PlatformProvider.getPlatformsOfAddresses(coin, addresses);
+        const builder = new MessageBuilder(coin, addresses, txInfo);
 
-        console.log(platforms.map((platform: PlatformInstance) => platform.token));
+        const tokens = await builder.getTokens();
+        if (!tokens) {
+            return;
+        }
+
+        const message = builder.buildMessage();
+
+        const response: messaging.MessagingDevicesResponse
+            = await this.firebaseApp.messaging().sendToDevice(tokens, message);
+
+        response.results.map((res: messaging.MessagingDeviceResult) => {
+            console.log(res.canonicalRegistrationToken, res.error ? 'error' : 'success');
+        });
     };
 }

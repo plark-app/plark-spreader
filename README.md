@@ -3,7 +3,7 @@
   <h3 align="center">Transaction and confirmation notification service</h3>
   <p align="center">
     <br/>
-    <a href="https://berrywallet.io">Berrywallet</a>
+    <a href="https://berrywallet.io">Plark</a>
     ·
     <a href="https://chrome.google.com/webstore/detail/berrywallet/boidgcdefidhoojfljngigkjffbodjmn">Chrome Extension</a>
     ·
@@ -28,8 +28,23 @@
 
 
 
+### Notification data payload:
+
+```json
+{
+    "type": "transaction",
+    "status": "new",
+    "coin": "BTC",
+    "txid": "b63e3073e97470f7716297975cf6879519ea4df67dfb085d649b37a7277a915d",
+    "addresses": "[\"mhB3FsV2N31PQ5nA8nEs3x7b8T21CDVvEz\"]",
+    "tx": "{\"txid\": \"b63e3073e97470f7716297975cf6879519ea4df67dfb085d649b37a7277a915d\"}",
+    "amount": 102.43
+}
+```
+
+
 ---
 
 
 
-*Created with Love by [Berries](https://berrywallet.io)*
+*Created with Love by [Plark Team](https://berrywallet.io)*
