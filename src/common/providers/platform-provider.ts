@@ -1,4 +1,4 @@
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 import { AddressModel, PlatformModel } from 'models';
 import * as AddressProvider from './address-provider';
 import Sequelize from 'sequelize';
@@ -30,6 +30,7 @@ export async function resolveUserPlatform(user: UserInstance, token: string, typ
         user_token: user.get('token'),
         type: type,
         token: token,
+        sync_counter: 0,
     });
 }
 
@@ -41,6 +42,8 @@ export async function resolveAddresses(platform: PlatformInstance, coin: Coin.Un
     const addresses = await Promise.all<AddressInstance>(addrs.map(
         (addr: string) => AddressProvider.getAddress(coin, addr),
     ));
+
+    await platform.updateAttributes({ sync_counter: platform.sync_counter + 1 });
 
     await platform.addAddresses(addresses);
 

@@ -1,6 +1,6 @@
 import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { map } from 'lodash';
-import { Coin, Utils } from '@berrywallet/core';
+import { Coin, Utils } from '@plark/wallet-core';
 import config from 'config';
 
 export class NotFoundBlock extends Error {

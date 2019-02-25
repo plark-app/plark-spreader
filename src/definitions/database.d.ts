@@ -1,4 +1,4 @@
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 import {
     Instance,
 
@@ -27,6 +27,7 @@ declare global {
         id?: number;
         user_token: string;
         type: Platform;
+        sync_counter: number;
         token: string;
     };
 

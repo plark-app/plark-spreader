@@ -1,0 +1,38 @@
+version: "3.3"
+
+services:
+
+  #|------------------------------------------
+  #| Postgres
+  #|------------------------------------------
+  postgres:
+    image: postgres:11.2
+    restart: always
+    environment:
+      POSTGRES_DB: plark
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+
+
+  #|------------------------------------------
+  #| FrontEnd
+  #| WEB Application as NodeJS Express
+  #|------------------------------------------
+  web:
+    image: plark/plark-spreader:latest
+    environment:
+      APP_ENV: production
+      HOST: 127.0.0.1
+      PORT: 80
+      SECURE: "true"
+      DATABASE_NAME: plark
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: root
+      DATABASE_HOST: postgres
+    ports:
+      - 80:80
+    depends_on:
+      - postgres

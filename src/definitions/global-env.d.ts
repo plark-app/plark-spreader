@@ -14,7 +14,7 @@ declare global {
         username: string;
         password: string;
         host: string;
-        port: string;
+        port: number;
         database: string;
     };
 

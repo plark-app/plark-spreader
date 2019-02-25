@@ -1,12 +1,13 @@
 import express from 'express';
+import eventEmitter from 'common/events';
 import bodyParser from 'body-parser';
 import { createLogger } from './logger';
 import { errorHandler } from './error-handler';
-import { EventEmitter } from 'events';
+
 
 import * as Methods from './methods';
 
-export const createApiRouter = (eventEmitter: EventEmitter): express.Router => {
+export const createApiRouter = (): express.Router => {
     const apiRouter = express.Router();
 
     apiRouter.use(bodyParser.json({ type: 'application/json' }));

@@ -1,7 +1,7 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import Axios from 'axios';
 import config from 'config';
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 
 export class InsightClient {
     protected coin: Coin.Unit;

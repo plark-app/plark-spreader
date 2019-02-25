@@ -5,30 +5,32 @@
 
 tracker:
 
+  # - Plark Service -
+  #
   # Bitcoin
-  # Use service https://insight.bitpay.com
+  # Use service https://btc.insight.plark.io
   BTC:
     type:       insight
-    apiUrl:     https://insight.bitpay.com/api
-    webSocket:  wss://insight.bitpay.com
+    apiUrl:     https://btc.insight.plark.io/api
+    webSocket:  wss://btc.insight.plark.io
 
 
-  # - Berrywallet Service -
+  # - Plark Service -
   #
   # Litecoin
-  # Use service https://test.btc.explorer.berrywallet.io
+  # Use service https://ltc.insight.plark.io
   LTC:
     type:       insight
-    apiUrl:     https://ltc.explorer.berrywallet.io/api
-    webSocket:  wss://ltc.explorer.berrywallet.io
+    apiUrl:     https://ltc.insight.plark.io/api
+    webSocket:  wss://ltc.insight.plark.io
 
 
   # DashCoin
-  # Use service https://dash-bitcore1.trezor.io
+  # Use service https://insight.dash.org
   DASH:
     type:       insight
-    apiUrl:     https://dash-bitcore1.trezor.io/api
-    webSocket:  https://dash-bitcore1.trezor.io
+    apiUrl:     https://insight.dash.org/insight-api-dash
+    webSocket:  wss://insight.dash.org
 
 
   # Ethereum
@@ -40,24 +42,24 @@ tracker:
 
 
 
-  # - Berrywallet Service -
+  # - Plark Service -
   #
   # Bitcoin Test
-  # Use service https://test.btc.explorer.berrywallet.io
+  # Use service https://btct.insight.plark.io
   BTCt:
     type:       insight
-    apiUrl:     https://test.btc.explorer.berrywallet.io/api
-    webSocket:  wss://test.btc.explorer.berrywallet.io
+    apiUrl:     https://btct.insight.plark.io/api
+    webSocket:  wss://btct.insight.plark.io
 
 
-  # - Berrywallet Service -
+  # - Plark Service -
   #
   # Litecoin Test
-  # Use service https://test.ltc.explorer.berrywallet.io
+  # Use service https://ltct.insight.plark.io
   LTCt:
     type:       insight
-    apiUrl:     https://test.ltc.explorer.berrywallet.io/api
-    webSocket:  wss://test.ltc.explorer.berrywallet.io
+    apiUrl:     https://ltct.insight.plark.io/api
+    webSocket:  wss://ltct.insight.plark.io
 
 
   # DashCoin Test

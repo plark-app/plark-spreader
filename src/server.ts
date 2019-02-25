@@ -9,15 +9,14 @@ import { modelList } from 'models';
 import { db } from 'common/database';
 import { ConsoleColor } from 'common/console';
 import { configureFirebase, PlarkNotifier } from 'common/firebase';
-import { eventEmitter } from 'common/events';
-
 import { startTransactionTracking } from 'common/coin-tracker';
+import { startSheduleModule } from 'schedule';
 
 const expressApp = express();
 expressApp.set('port', config.get('app.port', 5005));
 expressApp.set('hostname', config.get('app.host', 'localhost'));
 
-expressApp.use('/api', createApiRouter(eventEmitter));
+expressApp.use('/api', createApiRouter());
 
 async function startApplication() {
     try {
@@ -35,9 +34,10 @@ async function startApplication() {
     });
 
     const admin = configureFirebase();
-    new PlarkNotifier(admin, eventEmitter);
+    new PlarkNotifier(admin);
 
-    await startTransactionTracking(coins, eventEmitter);
+    await startTransactionTracking(coins);
+    await startSheduleModule();
 
     expressApp.listen(expressApp.get('port'), () => {
         console.log(`${ConsoleColor.FgYellow}Server is listening on port: ${expressApp.get('port')}`, ConsoleColor.Reset);

@@ -1,4 +1,4 @@
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 
 export type TransactionInfo = {
     txid: string;

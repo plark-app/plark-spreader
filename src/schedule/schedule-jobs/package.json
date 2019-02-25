@@ -1,0 +1,6 @@
+{
+    "name": "schedule-jobs",
+    "private": true,
+    "main": "schedule-jobs.ts",
+    "types": "schedule-jobs.ts"
+}

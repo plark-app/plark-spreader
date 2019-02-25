@@ -5,4 +5,4 @@ export enum Events {
     HandleTX = 'tx',
 }
 
-export const eventEmitter = new EventEmitter();
+export default new EventEmitter();

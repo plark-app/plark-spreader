@@ -1,5 +1,5 @@
 import BitcoinJS from 'bitcoinjs-lib';
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 import { CoinTracker, TransactionHandler } from './types';
 
 export abstract class AbstractTracker implements CoinTracker {

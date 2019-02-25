@@ -1,5 +1,4 @@
-import { Coin } from '@berrywallet/core';
-import { EventEmitter } from 'events';
+import { Coin } from '@plark/wallet-core';
 
 import { CoinTracker } from './types';
 import { CoinTrackerPool } from './tracker-pool';
@@ -28,8 +27,8 @@ export function createTracker(coin: Coin.Unit): CoinTracker {
 }
 
 
-export async function startTransactionTracking(coinList: Coin.Unit[], eventEmitter: EventEmitter): Promise<CoinTrackerPool> {
-    const coinTrackerPool = new CoinTrackerPool(coinList, eventEmitter);
+export async function startTransactionTracking(coinList: Coin.Unit[]): Promise<CoinTrackerPool> {
+    const coinTrackerPool = new CoinTrackerPool(coinList);
     await coinTrackerPool.start();
 
     return coinTrackerPool;

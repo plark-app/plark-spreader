@@ -1,4 +1,4 @@
-import { Coin, Utils } from '@berrywallet/core';
+import { Coin, Utils } from '@plark/wallet-core';
 import { AbstractTracker } from './abstract-tracker';
 import { InfuraClient } from './explorer-clients';
 

@@ -1,6 +1,9 @@
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
+import * as moment from 'moment';
 import { AddressModel, PlatformModel } from 'models';
-import { FindOptions } from 'sequelize';
+import Sequelize, { FindOptions } from 'sequelize';
+import { db } from 'common/database';
+
 
 export async function getAddress(coin: any, addr: string): Promise<AddressInstance> {
     const [addressInstance] = await AddressModel.findOrCreate({
@@ -40,4 +43,14 @@ export async function getAddresses(coin: Coin.Unit, onlyActive: boolean = true) 
     }
 
     return AddressModel.findAll(requestParams);
+}
+
+export async function removeOld(ttl: number = 60 * 60): Promise<void> {
+    const ttlTime = moment().subtract(ttl, 'seconds').toISOString();
+
+    db.getQueryInterface().bulkDelete('address__platforms', {
+        updated_at: {
+            [Sequelize.Op.lte]: ttlTime,
+        },
+    });
 }

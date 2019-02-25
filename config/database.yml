@@ -1,6 +1,6 @@
 database:
   dialect: postgres
-  database: berry
+  database: plark
   username: root
   password: root
   host: localhost

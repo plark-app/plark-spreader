@@ -1,5 +1,5 @@
 import { find, map } from 'lodash';
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 
 export interface AddressRegistryInterface {
     subscribe(coin: Coin.Unit, addresses: string[], params: SubscriptionParams): void;

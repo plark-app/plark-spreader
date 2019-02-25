@@ -1,4 +1,4 @@
 app:
-  host: spreader.berrywallet.io
+  host: spreader.plark.io
   port: 80
   secure: true

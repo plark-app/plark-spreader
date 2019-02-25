@@ -3,7 +3,7 @@
   <h3 align="center">Transaction and confirmation notification service</h3>
   <p align="center">
     <br/>
-    <a href="https://berrywallet.io">Plark</a>
+    <a href="https://plark.io">Plark</a>
     ·
     <a href="https://chrome.google.com/webstore/detail/berrywallet/boidgcdefidhoojfljngigkjffbodjmn">Chrome Extension</a>
     ·
@@ -47,4 +47,4 @@
 
 
 
-*Created with Love by [Plark Team](https://berrywallet.io)*
+*Created with Love by [Plark Team](https://plark.io)*

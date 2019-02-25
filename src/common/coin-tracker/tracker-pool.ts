@@ -1,7 +1,6 @@
-import { EventEmitter } from 'events';
 import { map, debounce } from 'lodash';
-import { Coin } from '@berrywallet/core';
-import { Events } from 'common/events';
+import { Coin } from '@plark/wallet-core';
+import eventEmitter, { Events } from 'common/events';
 
 import { AddressProvider } from 'common/providers';
 import { ConsoleColor } from 'common/console';
@@ -12,12 +11,10 @@ import { CoinTracker, TransactionHandler, TransactionInfo } from 'common/coin-tr
 export class CoinTrackerPool {
     protected trackers: Record<Coin.Unit, CoinTracker>;
     protected startTime: Date;
-    protected eventEmitter: EventEmitter;
 
-    public constructor(coinList: Coin.Unit[], eventEmitter: EventEmitter) {
+    public constructor(coinList: Coin.Unit[]) {
         this.trackers = {} as Record<Coin.Unit, CoinTracker>;
         this.startTime = new Date();
-        this.eventEmitter = eventEmitter;
 
         coinList.forEach((coin: Coin.Unit) => {
             try {
@@ -38,9 +35,11 @@ export class CoinTrackerPool {
 
             try {
                 tracker.onReceiveTransaction(this.handleTransaction);
+
                 return await tracker.start();
             } catch (error) {
                 console.log(`${ConsoleColor.FgRed}${error.message}${ConsoleColor.Reset}`);
+
                 return;
             }
         });
@@ -68,6 +67,6 @@ export class CoinTrackerPool {
     };
 
     protected handleTransaction: TransactionHandler = (coin: Coin.Unit, addresses: string[], txInfo: TransactionInfo) => {
-        this.eventEmitter.emit(Events.HandleTX, coin, addresses, txInfo);
+        eventEmitter.emit(Events.HandleTX, coin, addresses, txInfo);
     };
 }

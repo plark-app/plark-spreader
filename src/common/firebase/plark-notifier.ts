@@ -1,22 +1,18 @@
-import { EventEmitter } from 'events';
 import { app, messaging } from 'firebase-admin';
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 
 import { TransactionInfo } from 'common/coin-tracker/types';
-import { Events } from 'common/events';
+import eventEmitter, { Events } from 'common/events';
 import { MessageBuilder } from './message-builder';
 
 
 export class PlarkNotifier {
     protected firebaseApp: app.App;
-    protected eventEmitter: EventEmitter;
 
-
-    public constructor(firebaseApp: app.App, eventEmitter: EventEmitter) {
+    public constructor(firebaseApp: app.App) {
         this.firebaseApp = firebaseApp;
-        this.eventEmitter = eventEmitter;
 
-        this.eventEmitter.on(Events.HandleTX, this.handleTransaction);
+        eventEmitter.on(Events.HandleTX, this.handleTransaction);
     }
 
 

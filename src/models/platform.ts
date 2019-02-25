@@ -16,6 +16,9 @@ const attributes: SequelizeAttributes<PlatformAttributes> = {
     type: {
         type: Sequalize.STRING,
     },
+    sync_counter: {
+        type: Sequalize.INTEGER,
+    },
     token: {
         type: Sequalize.STRING,
         allowNull: false,

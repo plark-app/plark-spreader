@@ -1,4 +1,5 @@
 import express from 'express';
+import { uniq } from 'lodash';
 import { EventEmitter } from 'events';
 import Validator from 'validatorjs';
 
@@ -14,7 +15,7 @@ export const postSubscribe = (eventEmitter: EventEmitter) => {
             coin: ['required'],
             platform: ['required', 'in:ios,android,chrome'],
             platform_token: ['required', 'min:8'],
-            addresses: ['required', 'array'],
+            addresses: ['required', 'array', 'max:100'],
         };
 
         const data = req.body;
@@ -26,9 +27,11 @@ export const postSubscribe = (eventEmitter: EventEmitter) => {
             return _next(new ValidationError(validation.errors.all()));
         }
 
+        const addrs: string[] = uniq(data.addresses);
+
         const user = await UserProvider.getUser(userToken);
         const platform = await PlatformProvider.resolveUserPlatform(user, data.platform_token, data.platform);
-        const newAddrs = await PlatformProvider.resolveAddresses(platform, data.coin, data.addresses);
+        const newAddrs = await PlatformProvider.resolveAddresses(platform, data.coin, addrs);
 
         res.status(200).send({
             subscription: platform,

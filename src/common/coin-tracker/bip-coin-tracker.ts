@@ -1,6 +1,6 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import SocketClient from 'socket.io-client';
-import { Coin } from '@berrywallet/core';
+import { Coin } from '@plark/wallet-core';
 import { InsightClient } from './explorer-clients';
 import { AbstractTracker } from './abstract-tracker';
 
