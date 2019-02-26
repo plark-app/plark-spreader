@@ -24,13 +24,14 @@ tracker:
     apiUrl:     https://ltc.insight.plark.io/api
     webSocket:  wss://ltc.insight.plark.io
 
-
+  # - Plark Service -
+  #
   # DashCoin
-  # Use service https://insight.dash.org
+  # Use service https://dash.insight.plark.io
   DASH:
     type:       insight
-    apiUrl:     https://insight.dash.org/insight-api-dash
-    webSocket:  wss://insight.dash.org
+    apiUrl:     https://dash.insight.plark.io/api
+    webSocket:  wss://dash.insight.plark.io
 
 
   # Ethereum
@@ -62,12 +63,14 @@ tracker:
     webSocket:  wss://ltct.insight.plark.io
 
 
+  # - Plark Service -
+  #
   # DashCoin Test
-  # Use service https://testnet-insight.dashevo.org
+  # Use service https://dasht.insight.plark.io
   DASHt:
     type:       insight
-    apiUrl:     https://testnet-insight.dashevo.org/insight-api-dash
-    webSocket:  https://testnet-insight.dashevo.org
+    apiUrl:     https://dasht.insight.plark.io/api
+    webSocket:  https://dasht.insight.plark.io
 
 
   # Ethereum Ropsten Test
