@@ -28,7 +28,7 @@ export class InsightClient {
 
             return BitcoinJS.Block.fromHex(data.rawblock);
         } catch (error) {
-            throw new Error(`Not found block ${blockHash}`);
+            throw new Error(`Not found block ${blockHash} of ${this.coin}`);
         }
     }
 }

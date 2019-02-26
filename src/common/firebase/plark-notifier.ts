@@ -21,7 +21,6 @@ export class PlarkNotifier {
         console.log(` [${coin}] Transaction`);
         console.log(addresses);
         console.log(txInfo.txid);
-        console.log(txInfo);
         console.log(' ------------------------------------------------------------------ ');
 
         const builder = new MessageBuilder(coin, addresses, txInfo);
@@ -37,7 +36,11 @@ export class PlarkNotifier {
             = await this.firebaseApp.messaging().sendToDevice(tokens, message);
 
         response.results.map((res: messaging.MessagingDeviceResult) => {
-            console.log(res.canonicalRegistrationToken, res.error ? 'error' : 'success');
+            console.log(
+                res.messageId,
+                res.error ? 'ERROR' : 'SUCCESS',
+                res.error ? `[${res.error.code}] ${res.error.message}` : '',
+            );
         });
     };
 }

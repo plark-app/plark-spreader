@@ -83,7 +83,7 @@ export class BIPCoinTracker extends AbstractTracker {
 
             });
         } catch (error) {
-            console.warn(`Not found block ${blockHash}`);
+            console.warn(`Not found block ${blockHash} of ${this.getCoin()}`);
         }
     };
 
