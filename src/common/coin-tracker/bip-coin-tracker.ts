@@ -76,11 +76,15 @@ export class BIPCoinTracker extends AbstractTracker {
     };
 
     protected onHandleBlock = async (blockHash: string) => {
-        const block = await this.client.getBlock(blockHash);
+        try {
+            const block = await this.client.getBlock(blockHash);
 
-        block.transactions.forEach((_tx: BitcoinJS.Transaction) => {
+            block.transactions.forEach((_tx: BitcoinJS.Transaction) => {
 
-        });
+            });
+        } catch (error) {
+            console.warn(`Not found block ${blockHash}`);
+        }
     };
 
     protected onHandleTransaction = async (tx: Insight.InsightEventTransaction) => {

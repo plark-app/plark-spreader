@@ -11,8 +11,10 @@ tracker:
   # Use service https://btc.insight.plark.io
   BTC:
     type:       insight
-    apiUrl:     https://btc.insight.plark.io/api
-    webSocket:  wss://btc.insight.plark.io
+    apiUrl:     https://insight.bitpay.com/api
+    webSocket:  wss://insight.bitpay.com
+    # apiUrl:     https://btc.insight.plark.io/api
+    # webSocket:  wss://btc.insight.plark.io
 
 
   # - Plark Service -
