@@ -1,6 +1,6 @@
 FROM node:10.4.1-alpine
 
-ENV HOST=localhost
+ENV HOST=spreader.plark.io
 ENV PORT=80
 ENV SECURE=true
 
@@ -23,4 +23,5 @@ RUN envsubst < /var/www/build/.env.template.yml > /var/www/.env.yml
 
 EXPOSE 80
 
-CMD /bin/sh -c "envsubst < /var/www/build/.env.template.yml > /var/www/.env.yml && npm start"
+#CMD /bin/sh -c "envsubst < /var/www/build/.env.template.yml > /var/www/.env.yml && npm start"
+CMD /bin/sh -c "npm start"
