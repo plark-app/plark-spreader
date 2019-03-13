@@ -4,7 +4,7 @@ import { forEach } from 'lodash';
 
 import { coins } from 'common/coin';
 import { config } from 'config';
-import { createApiRouter } from 'routes';
+import Routes  from 'routes';
 import { modelList } from 'models';
 import { db } from 'common/database';
 import { ConsoleColor } from 'common/console';
@@ -16,7 +16,8 @@ const expressApp = express();
 expressApp.set('port', config.get('app.port', 5005));
 expressApp.set('hostname', config.get('app.host', 'localhost'));
 
-expressApp.use('/api', createApiRouter());
+expressApp.use('/api', Routes.createApiRouter());
+expressApp.use('/status', Routes.createStatusRouter());
 
 async function startApplication() {
     try {

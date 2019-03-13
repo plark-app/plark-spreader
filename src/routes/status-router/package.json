@@ -1,0 +1,6 @@
+{
+    "name": "status-router",
+    "private": true,
+    "main": "status-router.ts",
+    "types": "status-router.ts"
+}

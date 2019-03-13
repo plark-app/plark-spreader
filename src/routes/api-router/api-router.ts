@@ -7,7 +7,7 @@ import { errorHandler } from './error-handler';
 
 import * as Methods from './methods';
 
-export const createApiRouter = (): express.Router => {
+export default (): express.Router => {
     const apiRouter = express.Router();
 
     apiRouter.use(bodyParser.json({ type: 'application/json' }));

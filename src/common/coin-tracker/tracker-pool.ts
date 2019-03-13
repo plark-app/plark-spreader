@@ -51,7 +51,7 @@ export class CoinTrackerPool {
         return this.trackers[coin];
     }
 
-    static async getAddresses(coin: Coin.Unit): Promise<string[]> {
+    public static async getAddresses(coin: Coin.Unit): Promise<string[]> {
         const addrInstances = await AddressProvider.getAddresses(coin);
 
         return addrInstances.map((addr: AddressInstance) => addr.address);
