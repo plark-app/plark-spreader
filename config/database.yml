@@ -3,5 +3,5 @@ database:
   database: plark
   username: root
   password: root
-  host: localhost
+  host: postgres
   port: 5432
