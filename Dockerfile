@@ -10,7 +10,7 @@ ENV DATABASE_PASSWORD=root
 ENV DATABASE_HOST=localhost
 ENV DATABASE_PORT=5432
 
-RUN apk add --no-cache gettext git
+RUN apk add --no-cache gettext git python g++ make
 
 WORKDIR /var/www/
 
