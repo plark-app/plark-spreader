@@ -23,5 +23,4 @@ RUN envsubst < /var/www/build/.env.template.yml > /var/www/.env.yml
 
 EXPOSE 80
 
-#CMD /bin/sh -c "envsubst < /var/www/build/.env.template.yml > /var/www/.env.yml && npm start"
-CMD /bin/sh -c "npm start"
+CMD /bin/sh -c "envsubst < /var/www/build/.env.template.yml > /var/www/.env.yml && npm start"
