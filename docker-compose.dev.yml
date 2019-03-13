@@ -34,7 +34,7 @@ services:
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: root
       DATABASE_HOST: postgres
-      DATABASE_PORT:
+      DATABASE_PORT: 5432
 
       FIREBASE_NAME: ''
       FIREBASE_KEY_ID: ''
