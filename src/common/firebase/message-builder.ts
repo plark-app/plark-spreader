@@ -18,7 +18,8 @@ export class MessageBuilder {
     public buildMessage(): messaging.MessagingPayload {
         return {
             notification: {
-                title: `You receive new ${this.coin.getName()} Transaction`,
+                title: `Incoming Transaction`,
+                body: `Hey, you receive new ${this.coin.getName()} transaction!`,
             },
             data: {
                 type: 'transaction',

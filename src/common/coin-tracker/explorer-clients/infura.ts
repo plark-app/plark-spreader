@@ -1,4 +1,4 @@
-import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import Axios, { AxiosInstance } from 'axios';
 import { map } from 'lodash';
 import { Coin, Utils } from '@plark/wallet-core';
 import config from 'config';
@@ -29,50 +29,44 @@ export class InfuraClient {
         this.axios = Axios.create({
             baseURL: this.trackerParams.apiUrl,
             timeout: 10000,
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
     }
+
 
     public getTrackerParams(): Tracker.TrackerParams {
         return this.trackerParams;
     }
 
-    protected async sendRequest(method: string, params?: any[], isPost: boolean = false): Promise<Infura.JsonRPCResponse> {
+
+    protected async sendRequest(method: string, params?: any[]): Promise<Infura.JsonRPCResponse> {
         if (params) {
             params = map(params, (elem) => {
                 if (Number.isInteger(elem)) {
                     return Utils.numberToHex(elem);
                 }
 
-                if (elem instanceof Buffer) {
-                    return Utils.addHexPrefix(elem.toString('hex'));
+                if (Buffer.isBuffer(elem)) {
+                    return Utils.addHexPrefix((elem as Buffer).toString('hex'));
                 }
 
                 return elem;
             });
         }
 
-        const requestConfig = {} as AxiosRequestConfig;
-        if (isPost) {
-            requestConfig.method = 'POST';
-            requestConfig.headers = {
-                'Content-Type': 'application/json',
-            };
+        const requestData = {
+            jsonrpc: "2.0",
+            id: 1,
+            method: method,
+            params: params,
+        };
 
-            requestConfig.data = {
-                id: 1,
-                jsonrpc: '2.0',
-                method: method,
-                params: params,
-            };
-        } else {
-            requestConfig.url = `/${method}`;
-            requestConfig.method = 'GET';
-            requestConfig.params = {
-                params: JSON.stringify(params),
-            };
-        }
-
-        const { data } = await this.axios.request(requestConfig);
+        const { data } = await this.axios.request({
+            method: 'POST',
+            data: requestData,
+        });
 
         return data as Infura.JsonRPCResponse;
     }

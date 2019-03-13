@@ -3,7 +3,6 @@ import { AbstractTracker } from './abstract-tracker';
 import { InfuraClient } from './explorer-clients';
 
 const NEW_BLOCK_CHECK_TIMEOUT = 15000;
-// const RECONNECT_TIMEOUT = 30000;
 const CONNECTION_TIMEOUT = 60000 * 10;
 
 export class EthereumCoinTracker extends AbstractTracker {
@@ -22,6 +21,7 @@ export class EthereumCoinTracker extends AbstractTracker {
         this.client = new InfuraClient(coin);
     }
 
+
     public async start(): Promise<void> {
         await super.start();
 
@@ -29,6 +29,7 @@ export class EthereumCoinTracker extends AbstractTracker {
 
         this.log('Start track', `${this.addresses.length} addrs`);
     }
+
 
     protected async startBlockTracking() {
         this.enableBlockTracking = true;
@@ -39,9 +40,11 @@ export class EthereumCoinTracker extends AbstractTracker {
         this.blockTrackInterval = setInterval(this.blockTracker, NEW_BLOCK_CHECK_TIMEOUT);
     }
 
+
     protected get currentBlockTime(): number {
         return this._currentBlockTime || 0;
     }
+
 
     protected blockTracker = async () => {
         try {
@@ -58,6 +61,7 @@ export class EthereumCoinTracker extends AbstractTracker {
         }
     };
 
+
     protected async trackLastOrNextBlock(): Promise<Infura.Block> {
         let blockHeight: Infura.BlockNumber = 'latest';
         if (this._currentBlockHeight && (new Date().getTime() - this.currentBlockTime < CONNECTION_TIMEOUT)) {
@@ -67,10 +71,12 @@ export class EthereumCoinTracker extends AbstractTracker {
         return this.client.getBlock(blockHeight);
     }
 
+
     protected setCurrentBlock = (block: Infura.Block) => {
         this._currentBlockHeight = Utils.hexToBigNumber(block.number).toNumber();
         this._currentBlockTime = Utils.hexToBigNumber(block.timestamp).times(1000).toNumber();
     };
+
 
     protected onHandleTx = (tx: Infura.Transaction) => {
 
@@ -88,6 +94,7 @@ export class EthereumCoinTracker extends AbstractTracker {
             this.emitTransactionListener(tx.hash, addresses, tx);
         }
     };
+
 
     protected onHandleBlock = (block: Infura.Block) => {
         this.setCurrentBlock(block);

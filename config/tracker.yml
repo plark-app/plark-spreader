@@ -1,4 +1,3 @@
-
 ## ------------------------------------- ##
 ##    Trackers configuration list        ##
 ## ------------------------------------- ##
@@ -40,7 +39,7 @@ tracker:
   # Use service https://infura.io
   ETH:
     type:       infura
-    apiUrl:     https://api.infura.io/v1/jsonrpc/mainnet
+    apiUrl:     https://mainnet.infura.io/v3/19d88e5db236483ab0e0c4e2e20f4244
 
 
 
@@ -79,4 +78,4 @@ tracker:
   # Use service https://infura.io
   ETHt:
     type:       infura
-    apiUrl:     https://api.infura.io/v1/jsonrpc/ropsten
+    apiUrl:     https://ropsten.infura.io/v3/19d88e5db236483ab0e0c4e2e20f4244
