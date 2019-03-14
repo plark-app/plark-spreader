@@ -29,7 +29,6 @@ export class BIPCoinTracker extends AbstractTracker {
 
 
     protected createSocketConnection = async (): Promise<SocketIOClient.Socket> => {
-
         const config = this.client.getTrackerParams();
 
         if (!config.webSocket) {

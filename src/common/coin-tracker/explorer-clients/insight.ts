@@ -2,6 +2,7 @@ import BitcoinJS from 'bitcoinjs-lib';
 import Axios from 'axios';
 import config from 'config';
 import { Coin } from '@plark/wallet-core';
+import { wait } from 'common/helper';
 
 export class InsightClient {
     protected coin: Coin.Unit;
@@ -20,7 +21,7 @@ export class InsightClient {
         return this.trackerParams;
     }
 
-    public async getBlock(blockHash: string): Promise<BitcoinJS.Block> {
+    public async getBlock(blockHash: string, isSecondTry: boolean = false): Promise<BitcoinJS.Block> {
         try {
             const { data } = await Axios.get(`/rawblock/${blockHash}`, {
                 baseURL: this.trackerParams.apiUrl,
@@ -28,7 +29,13 @@ export class InsightClient {
 
             return BitcoinJS.Block.fromHex(data.rawblock);
         } catch (error) {
-            throw new Error(`Not found block ${blockHash} of ${this.coin}`);
+            if (isSecondTry) {
+                throw new Error(`Not found block ${blockHash} of ${this.coin}`);
+            }
+
+            await wait(3000);
+
+            return this.getBlock(blockHash, true);
         }
     }
 }
