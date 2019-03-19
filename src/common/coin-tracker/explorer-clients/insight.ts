@@ -33,7 +33,7 @@ export class InsightClient {
                 throw new Error(`Not found block ${blockHash} of ${this.coin}`);
             }
 
-            await wait(3000);
+            await wait(5000);
 
             return this.getBlock(blockHash, true);
         }

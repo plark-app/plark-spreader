@@ -2,9 +2,18 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { Coin } from '@plark/wallet-core';
 import { coins } from 'common/coin';
+import EventEmmiter from 'common/events';
 import { CoinTrackerPool } from 'common/coin-tracker';
 import { createLogger } from './logger';
 
+const lastBlockList = {} as any;
+EventEmmiter.on('new-block', (data: any) => {
+    const { block, coin } = data;
+    lastBlockList[coin] = {
+        time: new Date().toISOString(),
+        blockHeight: typeof block.getId === 'function' ? block.getId() : block.hash,
+    };
+});
 
 export default (): express.Router => {
     const apiRouter = express.Router();
@@ -26,6 +35,7 @@ export default (): express.Router => {
 
         res.send({
             coins: result,
+            lastBlocks: lastBlockList,
         });
     });
 

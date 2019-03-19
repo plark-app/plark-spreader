@@ -1,6 +1,7 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import SocketClient from 'socket.io-client';
 import { Coin } from '@plark/wallet-core';
+import EventEmmiter from 'common/events';
 import { InsightClient } from './explorer-clients';
 import { AbstractTracker } from './abstract-tracker';
 
@@ -77,6 +78,10 @@ export class BIPCoinTracker extends AbstractTracker {
     protected onHandleBlock = async (blockHash: string) => {
         try {
             const block = await this.client.getBlock(blockHash);
+            EventEmmiter.emit('new-block', {
+                block: block,
+                coin: this.getCoin(),
+            });
 
             block.transactions.forEach((_tx: BitcoinJS.Transaction) => {
 
