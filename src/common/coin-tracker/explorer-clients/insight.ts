@@ -4,6 +4,9 @@ import config from 'config';
 import { Coin } from '@plark/wallet-core';
 import { wait } from 'common/helper';
 
+const ATTEMPT_LIMIT = 2;
+const ATTEMPT_TIMEOUT = 5000;
+
 export class InsightClient {
     protected coin: Coin.Unit;
     protected trackerParams: Tracker.TrackerParams;
@@ -21,7 +24,7 @@ export class InsightClient {
         return this.trackerParams;
     }
 
-    public async getBlock(blockHash: string, isSecondTry: boolean = false): Promise<BitcoinJS.Block> {
+    public async getBlock(blockHash: string, attempt: number = 0): Promise<BitcoinJS.Block> {
         try {
             const { data } = await Axios.get(`/rawblock/${blockHash}`, {
                 baseURL: this.trackerParams.apiUrl,
@@ -29,13 +32,13 @@ export class InsightClient {
 
             return BitcoinJS.Block.fromHex(data.rawblock);
         } catch (error) {
-            if (isSecondTry) {
+            if (attempt >= ATTEMPT_LIMIT) {
                 throw new Error(`Not found block ${blockHash} of ${this.coin}`);
             }
 
-            await wait(5000);
+            await wait(ATTEMPT_TIMEOUT);
 
-            return this.getBlock(blockHash, true);
+            return this.getBlock(blockHash, attempt + 1);
         }
     }
 }

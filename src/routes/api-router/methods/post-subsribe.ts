@@ -29,15 +29,19 @@ export const postSubscribe = (eventEmitter: EventEmitter) => {
 
         const addrs: string[] = uniq(data.addresses);
 
-        const user = await UserProvider.getUser(userToken);
-        const platform = await PlatformProvider.resolveUserPlatform(user, data.platform_token, data.platform);
-        const newAddrs = await PlatformProvider.resolveAddresses(platform, data.coin, addrs);
+        try {
+            const user = await UserProvider.getUser(userToken);
+            const platform = await PlatformProvider.resolveUserPlatform(user, data.platform_token, data.platform);
+            const newAddrs = await PlatformProvider.resolveAddresses(platform, data.coin, addrs);
 
-        res.status(200).send({
-            subscription: platform,
-            addresses: newAddrs,
-        });
+            res.status(200).send({
+                subscription: platform,
+                addresses: newAddrs,
+            });
 
-        eventEmitter.emit(`${Events.UpdateCoin}:${data.coin}`);
+            eventEmitter.emit(`${Events.UpdateCoin}:${data.coin}`);
+        } catch (error) {
+            return _next(error);
+        }
     };
 };

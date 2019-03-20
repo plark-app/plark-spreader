@@ -50,8 +50,6 @@ export class AddressRegistry implements AddressRegistryInterface {
 
             addrReg[addr].push(params);
         });
-
-        console.log('Subscribed');
     }
 
     public unsubscribeUser(userToken: string, platform?: Platform): void {

@@ -1,12 +1,13 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import SocketClient from 'socket.io-client';
 import { Coin } from '@plark/wallet-core';
-import EventEmmiter from 'common/events';
+import EventEmmiter, { Events } from 'common/events';
 import { InsightClient } from './explorer-clients';
 import { AbstractTracker } from './abstract-tracker';
+import { wait } from 'common/helper';
 
 export class BIPCoinTracker extends AbstractTracker {
-    protected socket?: SocketIOClient.Socket;
+    protected socket: SocketIOClient.Socket;
     protected connected: boolean = false;
     protected coinNetwork: BitcoinJS.Network;
     protected client: InsightClient;
@@ -16,53 +17,83 @@ export class BIPCoinTracker extends AbstractTracker {
 
         this.coinNetwork = (Coin.makeCoin(this.coin) as Coin.BIPGenericCoin).networkInfo();
         this.client = new InsightClient(coin);
-    }
 
-    public async start(): Promise<void> {
-        await super.start();
-
-        this.socket = await this.createSocketConnection();
-
-        setTimeout(() => this.bindSocketEvents(), 500);
-
-        this.log('Start track', `${this.addresses.length} addrs`);
-    }
-
-
-    protected createSocketConnection = async (): Promise<SocketIOClient.Socket> => {
         const config = this.client.getTrackerParams();
 
         if (!config.webSocket) {
             throw new Error(`No webSocket URL for ${this.coin}`);
         }
 
-        const socket = SocketClient.connect(config.webSocket, {
+        this.socket = SocketClient.connect(config.webSocket, {
             timeout: 5000,
             autoConnect: false,
             rejectUnauthorized: true,
             transports: ['websocket'],
         });
+    }
 
-        const promise = new Promise<SocketIOClient.Socket>((resolve, reject) => {
-            socket.on('connect', () => {
-                resolve(socket);
+    public async start(): Promise<void> {
+        await super.start();
+        await this.openSocketConnection();
+
+        this.log('Start track', `${this.addresses.length} addrs`);
+    }
+
+
+    protected openSocketConnection = async (): Promise<void> => {
+        const promise = new Promise<void>((resolve, reject) => {
+            this.socket.once('connect', () => {
+                resolve();
+
+                EventEmmiter.emit(Events.TrackerConnected, { coin: this.getCoin() });
+
+                setTimeout(() => this.bindSocketEvents(), 500);
             });
 
-            socket.on('error', (error: Error) => {
+            this.socket.once('error', (error: Error) => {
                 this.log('Error', error);
                 reject(new Error(`[${this.coin}] Some Error`));
+
+                this.reconnect();
             });
 
-            socket.on('connect_timeout', (error: Error) => {
+            this.socket.once('connect_error', (error: Error) => {
+                this.log('Error', error);
+                reject(new Error(`[${this.coin}] Connect Error`));
+
+                this.reconnect();
+            });
+
+            this.socket.once('connect_timeout', (error: Error) => {
                 this.log('Timeout', error);
                 reject(new Error(`[${this.coin}] Connection timeout`));
+
+                this.reconnect();
+            });
+
+
+            this.socket.once('disconnect', () => {
+                EventEmmiter.emit(Events.TrackerDisconnected, { coin: this.getCoin() });
+
+                this.reconnect();
             });
         });
 
-        socket.open();
+        this.socket.open();
 
         return await promise;
     };
+
+
+    protected async reconnect() {
+        this.socket.removeAllListeners();
+        this.socket.close();
+
+        await wait(5000);
+
+        await this.openSocketConnection();
+    }
+
 
     protected bindSocketEvents = (): void => {
         if (!this.socket) {
@@ -75,10 +106,11 @@ export class BIPCoinTracker extends AbstractTracker {
         this.socket.on('tx', this.onHandleTransaction);
     };
 
+
     protected onHandleBlock = async (blockHash: string) => {
         try {
             const block = await this.client.getBlock(blockHash);
-            EventEmmiter.emit('new-block', {
+            EventEmmiter.emit(Events.NewBlock, {
                 block: block,
                 coin: this.getCoin(),
             });
@@ -90,6 +122,7 @@ export class BIPCoinTracker extends AbstractTracker {
             console.warn(`Not found block ${blockHash} of ${this.getCoin()}`);
         }
     };
+
 
     protected onHandleTransaction = async (tx: Insight.InsightEventTransaction) => {
         const handledAddresses: string[] = [];
@@ -104,6 +137,7 @@ export class BIPCoinTracker extends AbstractTracker {
             this.emitTransactionListener(tx.txid, handledAddresses);
         }
     };
+
 
     protected getAddresses(tx: Insight.InsightEventTransaction): string[] {
         return tx.vout.map((obj: any) => Object.keys(obj)[0]);

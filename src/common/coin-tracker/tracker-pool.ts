@@ -24,9 +24,13 @@ export class CoinTrackerPool {
                 return;
             }
 
-            eventEmitter.on(`${Events.UpdateCoin}:${coin}`, debounce(this.updateAddressList(coin), 500));
+            eventEmitter.on(
+                `${Events.UpdateCoin}:${coin}`,
+                debounce(() => this.updateAddressList(coin), 500),
+            );
         });
     }
+
 
     public async start(): Promise<void> {
         const promisesList = map(this.trackers, async (tracker: CoinTracker): Promise<void> => {
@@ -47,9 +51,11 @@ export class CoinTrackerPool {
         await Promise.all(promisesList);
     }
 
+
     public getTracker(coin: Coin.Unit): CoinTracker {
         return this.trackers[coin];
     }
+
 
     public static async getAddresses(coin: Coin.Unit): Promise<string[]> {
         const addrInstances = await AddressProvider.getAddresses(coin);
@@ -57,14 +63,14 @@ export class CoinTrackerPool {
         return addrInstances.map((addr: AddressInstance) => addr.address);
     }
 
-    protected updateAddressList = (coin: Coin.Unit) => {
-        return async () => {
-            const tracker = this.getTracker(coin);
 
-            const addrs = await CoinTrackerPool.getAddresses(coin);
-            tracker.setAddresses(addrs);
-        };
+    protected updateAddressList = async (coin: Coin.Unit) => {
+        const tracker = this.getTracker(coin);
+
+        const addrs = await CoinTrackerPool.getAddresses(coin);
+        tracker.setAddresses(addrs);
     };
+
 
     protected handleTransaction: TransactionHandler = (coin: Coin.Unit, addresses: string[], txInfo: TransactionInfo) => {
         eventEmitter.emit(Events.HandleTX, coin, addresses, txInfo);

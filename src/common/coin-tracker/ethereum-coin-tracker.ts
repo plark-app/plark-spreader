@@ -1,7 +1,7 @@
 import { Coin, Utils } from '@plark/wallet-core';
 import { AbstractTracker } from './abstract-tracker';
 import { InfuraClient } from './explorer-clients';
-import EventEmmiter from 'common/events';
+import EventEmmiter, { Events } from 'common/events';
 
 const NEW_BLOCK_CHECK_TIMEOUT = 15000;
 const CONNECTION_TIMEOUT = 60000 * 10;
@@ -39,6 +39,8 @@ export class EthereumCoinTracker extends AbstractTracker {
         this.setCurrentBlock(block);
 
         this.blockTrackInterval = setInterval(this.blockTracker, NEW_BLOCK_CHECK_TIMEOUT);
+
+        EventEmmiter.emit(Events.TrackerConnected, { coin: this.getCoin() });
     }
 
 

@@ -22,7 +22,7 @@ const attributes: SequelizeAttributes<PlatformAttributes> = {
     token: {
         type: Sequalize.STRING,
         allowNull: false,
-        unique: true,
+        unique: false,
     },
 };
 

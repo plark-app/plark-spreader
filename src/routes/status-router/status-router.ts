@@ -2,18 +2,41 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { Coin } from '@plark/wallet-core';
 import { coins } from 'common/coin';
-import EventEmmiter from 'common/events';
+import EventEmmiter, { Events } from 'common/events';
 import { CoinTrackerPool } from 'common/coin-tracker';
 import { createLogger } from './logger';
 
-const lastBlockList = {} as any;
-EventEmmiter.on('new-block', (data: any) => {
-    const { block, coin } = data;
-    lastBlockList[coin] = {
-        time: new Date().toISOString(),
-        blockHeight: typeof block.getId === 'function' ? block.getId() : block.hash,
+const trackerStatus = {} as any;
+
+coins.forEach((coin) => {
+    trackerStatus[coin] = {
+        connected: false,
+        disconnectTime: undefined,
+        block: undefined,
+        addressCount: 0,
     };
 });
+
+
+EventEmmiter.on(Events.NewBlock, (data: any) => {
+    const { block, coin } = data;
+    trackerStatus[coin].block = {
+        time: new Date().toLocaleString(),
+        hash: typeof block.getId === 'function' ? block.getId() : block.hash,
+    };
+});
+EventEmmiter.on(Events.TrackerConnected, (data: any) => {
+    const { coin } = data;
+    trackerStatus[coin].connected = true;
+    trackerStatus[coin].disconnectTime = undefined;
+});
+EventEmmiter.on(Events.TrackerDisconnected, (data: any) => {
+    const { coin } = data;
+
+    trackerStatus[coin].connected = false;
+    trackerStatus[coin].disconnectTime = new Date().toLocaleString();
+});
+
 
 export default (): express.Router => {
     const apiRouter = express.Router();
@@ -24,18 +47,13 @@ export default (): express.Router => {
     apiRouter.get('/', async (_req: express.Request, res: express.Response) => {
         const promises = coins.map(async (coin: Coin.Unit) => {
             const addresses = await CoinTrackerPool.getAddresses(coin);
-
-            return {
-                coin: coin,
-                addressCount: addresses.length,
-            };
+            trackerStatus[coin].addressCount = addresses.length;
         });
 
-        const result = await Promise.all(promises);
+        await Promise.all(promises);
 
         res.send({
-            coins: result,
-            lastBlocks: lastBlockList,
+            trackerStatus: trackerStatus,
         });
     });
 
