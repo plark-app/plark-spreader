@@ -1,6 +1,6 @@
 import path from 'path';
+import logger from 'common/logger';
 import { ConfigRegistry } from './config-registry';
-import { ConsoleColor } from 'common/console';
 
 const config = new ConfigRegistry<ApplicationConfig>();
 const rootPath = process.cwd();
@@ -16,7 +16,7 @@ try {
     const envConfig = path.resolve(rootPath, '.env.yml');
     config.loadYmlFile(envConfig);
 } catch (error) {
-    console.warn(`${ConsoleColor.FgYellow}  Provide .env.yml file!  ${ConsoleColor.Reset}`);
+    logger.warn(`Provide .env.yml file!`);
 }
 
 

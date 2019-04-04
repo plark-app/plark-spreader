@@ -4,18 +4,19 @@ import { forEach } from 'lodash';
 
 import { coins } from 'common/coin';
 import { config } from 'config';
-import Routes  from 'routes';
+import Routes from 'routes';
 import { modelList } from 'models';
 import { db } from 'common/database';
-import { ConsoleColor } from 'common/console';
 import { configureFirebase, PlarkNotifier } from 'common/firebase';
 import { startTransactionTracking } from 'common/coin-tracker';
 import { startSheduleModule } from 'schedule';
+import logger from 'common/logger';
 
 const expressApp = express();
 expressApp.set('port', config.get('app.port', 5005));
 expressApp.set('hostname', config.get('app.host', 'localhost'));
 
+expressApp.get('/', Routes.createHomePage());
 expressApp.use('/api', Routes.createApiRouter());
 expressApp.use('/status', Routes.createStatusRouter());
 
@@ -23,7 +24,7 @@ async function startApplication() {
     try {
         await db.sync();
     } catch (error) {
-        console.error('Cannot connect to database: ');
+        logger.error('Cannot connect to database: ', error);
 
         throw error;
     }
@@ -41,21 +42,13 @@ async function startApplication() {
     await startSheduleModule();
 
     expressApp.listen(expressApp.get('port'), () => {
-        console.log(`${ConsoleColor.FgYellow}Server is listening on port: ${expressApp.get('port')}`, ConsoleColor.Reset);
-
-        console.log(
-            '%sApp is running at http://%s:%d in %s mode %s',
-            ConsoleColor.FgGreen,
-            expressApp.get('hostname'),
-            expressApp.get('port'),
-            expressApp.get('env'),
-            ConsoleColor.Reset,
+        logger.info(`Server is listening on port: ${expressApp.get('port')}`);
+        logger.info(
+            `App is running at http://${expressApp.get('hostname')}:${expressApp.get('port')} in ${expressApp.get('env')} mode`,
         );
-        console.log();
     });
 }
 
 startApplication().catch((error) => {
-    console.error(error.message);
-    console.log();
+    logger.error(error.message, error);
 });

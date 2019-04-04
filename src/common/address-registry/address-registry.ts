@@ -1,5 +1,6 @@
 import { find, map } from 'lodash';
 import { Coin } from '@plark/wallet-core';
+import logger from 'common/logger';
 
 export interface AddressRegistryInterface {
     subscribe(coin: Coin.Unit, addresses: string[], params: SubscriptionParams): void;
@@ -12,7 +13,6 @@ export interface AddressRegistryInterface {
 }
 
 export class AddressRegistry implements AddressRegistryInterface {
-
     protected coinRegistry: CoinRegistryMap<AddressRegistryMap> = {};
 
     public getAddresses(coin: Coin.Unit): string[] {
@@ -53,7 +53,7 @@ export class AddressRegistry implements AddressRegistryInterface {
     }
 
     public unsubscribeUser(userToken: string, platform?: Platform): void {
-        console.log(userToken, platform);
+        logger.info(`Unsubscribe ${userToken} ${platform}`);
     }
 
     protected getAddressRegistry(coin: Coin.Unit): AddressRegistryMap {

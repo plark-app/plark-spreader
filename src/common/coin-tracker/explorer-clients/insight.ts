@@ -1,28 +1,32 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import Axios from 'axios';
 import config from 'config';
-import { Coin } from '@plark/wallet-core';
+import { Coin, Networking } from '@plark/wallet-core';
 import { wait } from 'common/helper';
+import logger from 'common/logger';
 
-const ATTEMPT_LIMIT = 2;
+const ATTEMPT_LIMIT = 5;
 const ATTEMPT_TIMEOUT = 5000;
 
 export class InsightClient {
     protected coin: Coin.Unit;
     protected trackerParams: Tracker.TrackerParams;
 
+
     public constructor(coin: Coin.Unit) {
         this.coin = coin;
         this.trackerParams = config.get(`tracker.${this.coin}`) as Tracker.TrackerParams;
 
         if (!this.trackerParams) {
-            throw new Error('Fuck!');
+            logger.warning('Fuck!');
         }
     }
+
 
     public getTrackerParams(): Tracker.TrackerParams {
         return this.trackerParams;
     }
+
 
     public async getBlock(blockHash: string, attempt: number = 0): Promise<BitcoinJS.Block> {
         try {
@@ -39,6 +43,25 @@ export class InsightClient {
             await wait(ATTEMPT_TIMEOUT);
 
             return this.getBlock(blockHash, attempt + 1);
+        }
+    }
+
+
+    public async getApiBlock(blockHash: string, attempt: number = 0): Promise<Networking.Api.Insight.Block> {
+        try {
+            const { data } = await Axios.get(`/block/${blockHash}`, {
+                baseURL: this.trackerParams.apiUrl,
+            });
+
+            return data;
+        } catch (error) {
+            if (attempt >= ATTEMPT_LIMIT) {
+                throw new Error(`Not found block ${blockHash} of ${this.coin}`);
+            }
+
+            await wait(ATTEMPT_TIMEOUT);
+
+            return this.getApiBlock(blockHash, attempt + 1);
         }
     }
 }

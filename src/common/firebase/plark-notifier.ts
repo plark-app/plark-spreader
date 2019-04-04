@@ -1,6 +1,6 @@
 import { app, messaging } from 'firebase-admin';
 import { Coin } from '@plark/wallet-core';
-
+import logger from 'common/logger';
 import { TransactionInfo } from 'common/coin-tracker/types';
 import eventEmitter, { Events } from 'common/events';
 import { MessageBuilder } from './message-builder';
@@ -17,11 +17,11 @@ export class PlarkNotifier {
 
 
     protected handleTransaction = async (coin: Coin.Unit, addresses: string[], txInfo: TransactionInfo): Promise<void> => {
-        console.log(' ------------------------------------------------------------------ ');
-        console.log(` [${coin}] Transaction`);
-        console.log(addresses);
-        console.log(txInfo.txid);
-        console.log(' ------------------------------------------------------------------ ');
+        logger.info([
+            `[${coin}] Transaction`,
+            addresses.join(', '),
+            txInfo.txid,
+        ].join(' / '));
 
         const builder = new MessageBuilder(coin, addresses, txInfo);
 
@@ -36,11 +36,11 @@ export class PlarkNotifier {
             = await this.firebaseApp.messaging().sendToDevice(tokens, message);
 
         response.results.map((res: messaging.MessagingDeviceResult) => {
-            console.log(
+            logger.info([
                 res.messageId,
                 res.error ? 'ERROR' : 'SUCCESS',
                 res.error ? `[${res.error.code}] ${res.error.message}` : '',
-            );
+            ].join(' / '));
         });
     };
 }

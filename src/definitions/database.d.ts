@@ -19,9 +19,18 @@ declare global {
         [P in keyof T]: string | DataTypeAbstract | DefineAttributeColumnOptions;
     };
 
+
     type UserAttributes = {
         token: string;
     };
+
+    type UserInstance
+        = Instance<UserAttributes>
+        & UserAttributes
+        & {
+        getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance>;
+    };
+
 
     type PlatformAttributes = {
         id?: number;
@@ -31,18 +40,10 @@ declare global {
         token: string;
     };
 
-    type AddressAttributes = {
-        id?: number;
-        coin: Coin.Unit;
-        address: string;
-    };
-
-
-    type UserInstance = Instance<UserAttributes> & UserAttributes & {
-        getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance>;
-    };
-
-    type PlatformInstance = Instance<PlatformAttributes> & PlatformAttributes & {
+    type PlatformInstance
+        = Instance<PlatformAttributes>
+        & PlatformAttributes
+        & {
         Addresses?: AddressInstance[];
 
         getAddresses: BelongsToManyGetAssociationsMixin<AddressInstance>;
@@ -54,7 +55,45 @@ declare global {
         setUser: BelongsToSetAssociationMixin<UserInstance>;
     }
 
-    type AddressInstance = Instance<AddressAttributes> & AddressAttributes & {
+
+    type AddressAttributes = {
+        id?: number;
+        coin: Coin.Unit;
+        address: string;
+    };
+
+    type AddressInstance
+        = Instance<AddressAttributes>
+        & AddressAttributes
+        & {
         getPlatforms: BelongsToManyGetAssociationsMixin<PlatformInstance>;
+    }
+
+
+    namespace block {
+        type BlockAttributes = {
+            id?: number;
+            coin: Coin.Unit;
+            hash: string;
+            height: number;
+            blocktime: number;
+            original?: any;
+        }
+
+        type BlockInstance = Instance<BlockAttributes> & BlockAttributes;
+    }
+
+
+    namespace transaction {
+        type TransactionAttributes = {
+            id?: number;
+            coin: Coin.Unit;
+            txid: string;
+            amount?: number;
+        }
+
+        type TransactionInstance
+            = Instance<TransactionAttributes>
+            & TransactionAttributes;
     }
 }

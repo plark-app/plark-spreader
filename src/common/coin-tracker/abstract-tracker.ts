@@ -1,5 +1,6 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import { Coin } from '@plark/wallet-core';
+import logger from 'common/logger';
 import { CoinTracker, TransactionHandler } from './types';
 
 export abstract class AbstractTracker implements CoinTracker {
@@ -52,6 +53,6 @@ export abstract class AbstractTracker implements CoinTracker {
     };
 
     protected log(eventName: string, ...data: any[]): void {
-        console.log(`[${this.coin}] [${eventName}]`, ...data);
+        logger.info(`[${this.coin}] [${eventName}] ${[...data].join(' ')}`);
     }
 }

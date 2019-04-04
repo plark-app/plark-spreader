@@ -1,10 +1,13 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import SocketClient from 'socket.io-client';
-import { Coin } from '@plark/wallet-core';
+import BigNumber from 'bignumber.js';
+import { Coin, Constants } from '@plark/wallet-core';
+import logger from 'common/logger';
+import { wait } from 'common/helper';
+import { TransactionProvider } from 'common/providers';
 import EventEmmiter, { Events } from 'common/events';
 import { InsightClient } from './explorer-clients';
 import { AbstractTracker } from './abstract-tracker';
-import { wait } from 'common/helper';
 
 export class BIPCoinTracker extends AbstractTracker {
     protected socket: SocketIOClient.Socket;
@@ -110,36 +113,53 @@ export class BIPCoinTracker extends AbstractTracker {
     protected onHandleBlock = async (blockHash: string) => {
         try {
             const block = await this.client.getBlock(blockHash);
+            const apiBlock = await this.client.getApiBlock(blockHash);
+
             EventEmmiter.emit(Events.NewBlock, {
                 block: block,
+                blockData: {
+                    hash: apiBlock.hash,
+                    height: apiBlock.height,
+                    blocktime: apiBlock.time,
+                },
                 coin: this.getCoin(),
             });
 
             block.transactions.forEach((_tx: BitcoinJS.Transaction) => {
-
             });
         } catch (error) {
-            console.warn(`Not found block ${blockHash} of ${this.getCoin()}`);
+            logger.warn(`[${this.getCoin()}] Not found block ${blockHash}`);
         }
     };
 
 
     protected onHandleTransaction = async (tx: Insight.InsightEventTransaction) => {
         const handledAddresses: string[] = [];
+        let estimatedAmount = new BigNumber(0);
 
-        this.getAddresses(tx).forEach((address: string) => {
-            if (this.addresses.indexOf(address) >= 0) {
-                handledAddresses.push(address);
+        this.getAddresses(tx).forEach((data: { addr: string; amount: number; }) => {
+            if (this.addresses.indexOf(data.addr) >= 0) {
+                handledAddresses.push(data.addr);
+                estimatedAmount = estimatedAmount.plus(data.amount);
             }
         });
 
         if (handledAddresses.length > 0) {
             this.emitTransactionListener(tx.txid, handledAddresses);
+            TransactionProvider.newTransaction(
+                this.coin,
+                tx.txid,
+                estimatedAmount.div(Constants.SATOSHI_PER_COIN).toNumber(),
+            );
         }
     };
 
 
-    protected getAddresses(tx: Insight.InsightEventTransaction): string[] {
-        return tx.vout.map((obj: any) => Object.keys(obj)[0]);
+    protected getAddresses(tx: Insight.InsightEventTransaction): Array<{ addr: string; amount: number; }> {
+        return tx.vout.map((obj: any) => {
+            const addr = Object.keys(obj)[0];
+
+            return { addr: addr, amount: obj[addr] || 0 };
+        });
     }
 }

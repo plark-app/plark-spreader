@@ -3,9 +3,9 @@ import { Coin } from '@plark/wallet-core';
 import eventEmitter, { Events } from 'common/events';
 
 import { AddressProvider } from 'common/providers';
-import { ConsoleColor } from 'common/console';
 import { createTracker } from 'common/coin-tracker/coin-tracker';
 import { CoinTracker, TransactionHandler, TransactionInfo } from 'common/coin-tracker/types';
+import logger from 'common/logger';
 
 
 export class CoinTrackerPool {
@@ -20,7 +20,7 @@ export class CoinTrackerPool {
             try {
                 this.trackers[coin] = createTracker(coin);
             } catch (error) {
-                console.log(ConsoleColor.FgRed, error.message, ConsoleColor.Reset);
+                logger.error(error.message, error);
                 return;
             }
 
@@ -42,8 +42,7 @@ export class CoinTrackerPool {
 
                 return await tracker.start();
             } catch (error) {
-                console.log(`${ConsoleColor.FgRed}${error.message}${ConsoleColor.Reset}`);
-
+                logger.error(error.message, error);
                 return;
             }
         });

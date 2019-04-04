@@ -1,7 +1,9 @@
-import { Coin, Utils } from '@plark/wallet-core';
+import { Coin, Constants, Utils } from '@plark/wallet-core';
+import BigNumber from 'bignumber.js';
 import { AbstractTracker } from './abstract-tracker';
 import { InfuraClient } from './explorer-clients';
 import EventEmmiter, { Events } from 'common/events';
+import { TransactionProvider } from 'common/providers';
 
 const NEW_BLOCK_CHECK_TIMEOUT = 15000;
 const CONNECTION_TIMEOUT = 60000 * 10;
@@ -82,19 +84,27 @@ export class EthereumCoinTracker extends AbstractTracker {
 
 
     protected onHandleTx = (tx: Infura.Transaction) => {
-
         const addresses = [];
+        let estimatedAmount = new BigNumber(0);
 
         if (this.addresses.indexOf(tx.from) >= 0) {
             addresses.push(tx.from);
+            estimatedAmount = estimatedAmount.minus(tx.value);
         }
 
         if (this.addresses.indexOf(tx.to) >= 0) {
             addresses.push(tx.to);
+            estimatedAmount = estimatedAmount.plus(tx.value);
         }
 
         if (addresses.length > 0) {
             this.emitTransactionListener(tx.hash, addresses, tx);
+
+            TransactionProvider.newTransaction(
+                this.coin,
+                tx.hash,
+                estimatedAmount.div(Constants.WEI_PER_COIN).toNumber(),
+            );
         }
     };
 
@@ -102,8 +112,13 @@ export class EthereumCoinTracker extends AbstractTracker {
     protected onHandleBlock = (block: Infura.Block) => {
         this.setCurrentBlock(block);
 
-        EventEmmiter.emit('new-block', {
+        EventEmmiter.emit(Events.NewBlock, {
             block: block,
+            blockData: {
+                hash: block.hash,
+                height: +block.number,
+                blocktime: +block.timestamp,
+            },
             coin: this.getCoin(),
         });
 
