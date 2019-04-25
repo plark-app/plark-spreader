@@ -19,7 +19,7 @@ export class MessageBuilder {
         return {
             notification: {
                 title: `Incoming Transaction`,
-                body: `Hey, you receive new ${this.coin.getName()} transaction!`,
+                body: `Hey! Some coins rolled in 👛`,
             },
             data: {
                 type: 'transaction',
