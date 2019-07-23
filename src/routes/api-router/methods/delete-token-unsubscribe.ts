@@ -1,19 +1,18 @@
 import express from 'express';
 
 import Validator from 'validatorjs';
-import { ValidationError } from 'common/http-errors';
-import { UserProvider, PlatformProvider } from 'common/providers';
 import { EventEmitter } from 'events';
+import { ValidationError } from 'common/http-errors';
+import { PlatformProvider } from 'common/providers';
+import { coins } from 'common/coin';
 import { Events } from 'common/events';
 
-export default function delete_Unsubscribe(eventEmitter: EventEmitter) {
+export default function delete_TokenUnsubscribe(eventEmitter: EventEmitter) {
     return async (req: express.Request, res: express.Response, _next: AnyFunc) => {
 
         const data = req.body;
-        const userToken: string = req.params.user_token;
 
         let rules = {
-            coin: ['required'],
             platform_token: ['required', 'min:8'],
         };
 
@@ -23,8 +22,7 @@ export default function delete_Unsubscribe(eventEmitter: EventEmitter) {
             return _next(new ValidationError(validation.errors.all()));
         }
 
-        const user = await UserProvider.getUser(userToken);
-        const platform = await PlatformProvider.findUserPlatform(user, data.platform_token);
+        const platform = await PlatformProvider.findPlatform(data.platform_token);
 
         if (!platform) {
             res.status(204).send();
@@ -32,10 +30,12 @@ export default function delete_Unsubscribe(eventEmitter: EventEmitter) {
             return;
         }
 
-        await PlatformProvider.unsubscribeAddresses(platform, data.coin);
+        await PlatformProvider.unsubscribeAddresses(platform);
 
         res.status(204).send();
 
-        eventEmitter.emit(`${Events.UpdateCoin}:${data.coin}`);
+        coins.map((coin: string) => {
+            eventEmitter.emit(`${Events.UpdateCoin}:${coin}`);
+        });
     };
 }

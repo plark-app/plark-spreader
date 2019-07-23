@@ -11,8 +11,6 @@ gulp.task('copy', copyTask({
     destinations: ['./dest/public'],
 }));
 
-gulp.task('build', ['copy']);
-
 function copyTask(opts) {
     const {
         source,

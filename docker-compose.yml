@@ -3,7 +3,7 @@ version: "3.3"
 services:
 
   #|------------------------------------------
-  #| Postgres
+  #| PostgreSQL
   #|------------------------------------------
   postgres:
     image: postgres:11.2

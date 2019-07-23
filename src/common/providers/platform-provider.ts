@@ -1,11 +1,25 @@
+import Sequelize from 'sequelize';
 import { Coin } from '@plark/wallet-core';
 import { AddressModel, PlatformModel } from 'models';
 import * as AddressProvider from './address-provider';
-import Sequelize from 'sequelize';
-
 
 export async function findUserPlatform(user: UserInstance, token: string): Promise<PlatformInstance | undefined> {
     let [platform] = await user.getPlatforms({
+        where: {
+            token: token,
+        },
+    });
+
+    if (!platform) {
+        return;
+    }
+
+    return platform;
+}
+
+
+export async function findPlatform(token: string) : Promise<PlatformInstance | undefined> {
+    const platform = await PlatformModel.findOne({
         where: {
             token: token,
         },
@@ -51,12 +65,16 @@ export async function resolveAddresses(platform: PlatformInstance, coin: Coin.Un
 }
 
 
-export async function unsubscribeAddresses(platform: PlatformInstance, coin: Coin.Unit): Promise<void> {
-    const existsAddresses = await platform.getAddresses({
-        where: {
+export async function unsubscribeAddresses(platform: PlatformInstance, coin?: Coin.Unit): Promise<void> {
+
+    const queryParams: Sequelize.BelongsToManyGetAssociationsMixinOptions = {};
+    if (coin) {
+        queryParams.where = {
             coin: coin,
-        },
-    });
+        };
+    }
+
+    const existsAddresses = await platform.getAddresses(queryParams);
 
     await platform.removeAddresses(existsAddresses);
 }

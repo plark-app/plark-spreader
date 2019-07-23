@@ -13,9 +13,10 @@ export default (): express.Router => {
     apiRouter.use(bodyParser.json({ type: 'application/json' }));
     apiRouter.use(createLogger());
 
-    apiRouter.get('/status/:user_token', Methods.getStatus);
-    apiRouter.post('/subscribe/:user_token', Methods.postSubscribe(eventEmitter));
-    apiRouter.delete('/unsubscribe/:user_token', Methods.deleteUnsubscribe(eventEmitter));
+    apiRouter.get('/status/:user_token', Methods.get_Status);
+    apiRouter.post('/subscribe/:user_token', Methods.post_Subscribe(eventEmitter));
+    apiRouter.delete('/unsubscribe/:user_token', Methods.delete_Unsubscribe(eventEmitter));
+    apiRouter.delete('/token-unsubscribe', Methods.delete_TokenUnsubscribe(eventEmitter));
 
     apiRouter.use(errorHandler);
 

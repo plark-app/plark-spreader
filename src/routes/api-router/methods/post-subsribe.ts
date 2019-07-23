@@ -2,13 +2,11 @@ import express from 'express';
 import { uniq } from 'lodash';
 import { EventEmitter } from 'events';
 import Validator from 'validatorjs';
-
 import { ValidationError } from 'common/http-errors';
 import { UserProvider, PlatformProvider } from 'common/providers';
 import { Events } from 'common/events';
 
-
-export const postSubscribe = (eventEmitter: EventEmitter) => {
+export default function postSubscribe(eventEmitter: EventEmitter) {
     return async (req: express.Request, res: express.Response, _next: AnyFunc) => {
 
         let rules = {
@@ -44,4 +42,4 @@ export const postSubscribe = (eventEmitter: EventEmitter) => {
             return _next(error);
         }
     };
-};
+}

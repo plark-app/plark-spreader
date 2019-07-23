@@ -3,7 +3,7 @@ import { groupBy, forEach } from 'lodash';
 import { UserProvider } from 'common/providers';
 import { AddressModel, PlatformModel } from 'models';
 
-export const getStatus = async (req: express.Request, res: express.Response, _next: AnyFunc) => {
+export default async function getStatus(req: express.Request, res: express.Response, _next: AnyFunc) {
     const user = await UserProvider.getUser(req.params.user_token);
     const platforms = await PlatformModel.findAll({
         where: {
@@ -43,4 +43,4 @@ export const getStatus = async (req: express.Request, res: express.Response, _ne
     res.status(200).send({
         data: responseData,
     });
-};
+}

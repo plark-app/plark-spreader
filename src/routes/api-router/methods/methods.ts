@@ -1,3 +1,4 @@
-export { getStatus } from './get-status';
-export { postSubscribe } from './post-subsribe';
-export { deleteUnsubscribe } from './delete-unsubscribe';
+export { default as get_Status } from './get-status';
+export { default as post_Subscribe } from './post-subsribe';
+export { default as delete_Unsubscribe } from './delete-unsubscribe';
+export { default as delete_TokenUnsubscribe } from './delete-token-unsubscribe';
