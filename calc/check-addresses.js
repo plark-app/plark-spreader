@@ -1,26 +1,24 @@
 const fs = require('fs');
-const axios = require('axios');
-const BigNumber = require('bignumber.js');
-const createStatuser = require('./statuser');
+const parser = require('./parser');
 
 const COIN = process.env.COIN || 'BTC';
 
 const CURRENCY_MAP = {
     BTC: {
         blockbook: 'https://btc.blockbook.plark.io/api/',
-        model: calculateBIP,
+        model: parser.calculateBIP,
     },
     DASH: {
         blockbook: 'https://dash1.trezor.io/api/',
-        model: calculateBIP,
+        model: parser.calculateBIP,
     },
     LTC: {
         blockbook: 'https://ltc1.trezor.io/api/',
-        model: calculateBIP,
+        model: parser.calculateBIP,
     },
     ETH: {
-        infura: 'https://mainnet.infura.io/v3/19d88e5db236483ab0e0c4e2e20f4244',
-        model: calculateETH,
+        etherscan: 'https://api.etherscan.io/api',
+        model: parser.calculateETH,
     }
 };
 
@@ -28,75 +26,6 @@ if (!COIN in CURRENCY_MAP) {
     throw new Error('Invalid COIN ' + COIN);
 }
 
-async function calculateBIP(addrs, params) {
-    const client = axios.create({
-        baseURL: params.blockbook
-    });
-
-    const step = 1;
-    const total = (addrs.length - addrs.length % step) / step;
-    const statuser = createStatuser(total);
-
-    for (let k = 0; k < addrs.length; k += step) {
-        if (addrs[k].length === 0) {
-            continue;
-        }
-
-        try {
-            const {data} = await client.get('/address/' + addrs[k]);
-            statuser.incrementBalance(addrs[k], data.balance);
-            const parsed = statuser.increment();
-
-            if (parsed % 50 === 0) {
-                statuser.renderStatus();
-            }
-        } catch (error) {
-            console.log(`Parse address Error [${addrs[k]}]: ${error.message}`);
-        }
-    }
-
-    return statuser;
-}
-
-
-async function calculateETH(addrs, params) {
-    const client = axios.create({
-        baseURL: params.infura,
-        headers: {
-            'Content-type': 'application/json'
-        }
-    });
-
-    const step = 1;
-    const total = (addrs.length - addrs.length % step) / step;
-    const statuser = createStatuser(total);
-
-    for (let k = 0; k < addrs.length; k += step) {
-        if (addrs[k].length === 0) {
-            continue;
-        }
-
-        try {
-            const { data } = await client.post('', {
-                jsonrpc: '2.0',
-                method: 'eth_getBalance',
-                params: [addrs[k], 'latest'],
-                id: 1,
-            });
-
-            statuser.incrementBalance(addrs[k], new BigNumber(data.result).div(1E18));
-            const parsed = statuser.increment();
-
-            if (parsed % 50 === 0) {
-                statuser.renderStatus();
-            }
-        } catch (error) {
-            console.log(`Parse address Error [${addrs[k]}]: ${error.message}`);
-        }
-    }
-
-    return statuser;
-}
 
 (async function () {
     const fileName = __dirname + `/stubs/${COIN}-addrs.txt`;
@@ -112,7 +41,14 @@ async function calculateETH(addrs, params) {
 
     console.log(`Total: ${res.parsed()} | Balance: ${res.balance().toFormat(4)} | Addresses: ${res.addresses()}`);
 
-    const storeData = __dirname + `/${COIN}-response.json`;
+    const dir = __dirname + '/responses';
+    try {
+        fs.readdirSync(dir)
+    } catch (e) {
+        fs.mkdirSync(dir);
+    }
+
+    const storeData = `${dir}/${COIN}-response.json`;
     fs.writeFileSync(storeData, JSON.stringify({
         parsed: res.parsed(),
         balances: res.positiveBalances(),
