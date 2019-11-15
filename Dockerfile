@@ -1,4 +1,4 @@
-FROM node:10.4.1-alpine
+FROM node:10.14.1-alpine
 
 ENV HOST=spreader.plark.io
 ENV PORT=80

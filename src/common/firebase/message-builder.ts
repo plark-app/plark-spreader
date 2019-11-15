@@ -4,7 +4,6 @@ import { TransactionInfo } from 'common/coin-tracker/types';
 import { PlatformProvider } from 'common/providers';
 
 export class MessageBuilder {
-
     protected coin: Coin.CoinInterface;
     protected addresses: string[];
     protected txInfo: TransactionInfo;
@@ -18,7 +17,7 @@ export class MessageBuilder {
     public buildMessage(): messaging.MessagingPayload {
         return {
             notification: {
-                title: `Incoming Transaction`,
+                title: `Incoming ${this.coin.getUnit()} Transaction`,
                 body: `Hey! Some coins rolled in 👛`,
             },
             data: {

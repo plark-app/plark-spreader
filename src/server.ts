@@ -9,7 +9,7 @@ import { modelList } from 'models';
 import { db } from 'common/database';
 import { configureFirebase, PlarkNotifier } from 'common/firebase';
 import { startTransactionTracking } from 'common/coin-tracker';
-import { startSheduleModule } from 'schedule';
+import { startScheduleModule } from 'schedule';
 import logger from 'common/logger';
 
 const expressApp = express();
@@ -39,7 +39,7 @@ async function startApplication() {
     new PlarkNotifier(admin);
 
     await startTransactionTracking(coins);
-    await startSheduleModule();
+    await startScheduleModule();
 
     expressApp.listen(expressApp.get('port'), () => {
         logger.info(`Server is listening on port: ${expressApp.get('port')}`);

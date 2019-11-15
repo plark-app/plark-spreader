@@ -1,7 +1,21 @@
 const fs = require('fs');
 const parser = require('./parser');
 
-const COIN = process.env.COIN || 'BTC';
+const argv = (() => {
+    const arguments = {};
+
+    process.argv.slice(2).map( (element) => {
+        const matches = element.match( '--([a-zA-Z0-9]+)=(.*)');
+        if ( matches ){
+            arguments[matches[1]] = matches[2]
+                .replace(/^['"]/, '').replace(/['"]$/, '');
+        }
+    });
+
+    return arguments;
+})();
+
+const COIN = argv.coin || 'BTC';
 
 const CURRENCY_MAP = {
     BTC: {
@@ -14,6 +28,10 @@ const CURRENCY_MAP = {
     },
     LTC: {
         blockbook: 'https://ltc1.trezor.io/api/',
+        model: parser.calculateBIP,
+    },
+    BCH: {
+        blockbook: 'https://bch1.trezor.io/api/',
         model: parser.calculateBIP,
     },
     ETH: {
