@@ -39,9 +39,11 @@ export abstract class AbstractTracker implements CoinTracker {
         this.txHandler = txHandler;
     }
 
-    protected emitTransactionListener = (txid: string,
-                                         addresses: string[],
-                                         tx?: Infura.Transaction | BitcoinJS.Transaction): void => {
+    protected emitTransactionListener(
+        txid: string,
+        addresses: string[],
+        tx?: Infura.Transaction | BitcoinJS.Transaction,
+    ): void {
         if (!this.txHandler) {
             return;
         }
@@ -50,7 +52,7 @@ export abstract class AbstractTracker implements CoinTracker {
             txid: txid,
             ...tx,
         });
-    };
+    }
 
     protected log(eventName: string, ...data: any[]): void {
         logger.info(`[${this.coin}] [${eventName}] ${[...data].join(' ')}`);

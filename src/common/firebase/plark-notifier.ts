@@ -5,7 +5,6 @@ import { TransactionInfo } from 'common/coin-tracker/types';
 import eventEmitter, { Events } from 'common/events';
 import { MessageBuilder } from './message-builder';
 
-
 export class PlarkNotifier {
     protected firebaseApp: app.App;
 
@@ -14,7 +13,6 @@ export class PlarkNotifier {
 
         eventEmitter.on(Events.HandleTX, this.handleTransaction);
     }
-
 
     protected handleTransaction = async (coin: Coin.Unit, addresses: string[], txInfo: TransactionInfo): Promise<void> => {
         logger.info([

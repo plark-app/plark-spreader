@@ -2,12 +2,16 @@ import { Coin, Constants, Utils } from '@plark/wallet-core';
 import BigNumber from 'bignumber.js';
 import { AbstractTracker } from './abstract-tracker';
 import { InfuraClient } from './explorer-clients';
-import EventEmmiter, { Events } from 'common/events';
+import EventEmitter, { Events } from 'common/events';
 import { TransactionProvider } from 'common/providers';
 
 const NEW_BLOCK_CHECK_TIMEOUT = 15000;
 const CONNECTION_TIMEOUT = 60000 * 10;
 
+/**
+ * Class EthereumCoinTracker
+ * For tracking every ethereum transaction.
+ */
 export class EthereumCoinTracker extends AbstractTracker {
     protected client: InfuraClient;
 
@@ -18,21 +22,21 @@ export class EthereumCoinTracker extends AbstractTracker {
     protected connected: boolean = false;
     protected blockTrackInterval?: any;
 
+    /**
+     * @param coin
+     */
     public constructor(coin: Coin.Unit) {
         super(coin);
 
         this.client = new InfuraClient(coin);
     }
 
-
     public async start(): Promise<void> {
         await super.start();
-
         await this.startBlockTracking();
 
         this.log('Start track', `${this.addresses.length} addrs`);
     }
-
 
     protected async startBlockTracking() {
         this.enableBlockTracking = true;
@@ -42,14 +46,12 @@ export class EthereumCoinTracker extends AbstractTracker {
 
         this.blockTrackInterval = setInterval(this.blockTracker, NEW_BLOCK_CHECK_TIMEOUT);
 
-        EventEmmiter.emit(Events.TrackerConnected, { coin: this.getCoin() });
+        EventEmitter.emit(Events.TrackerConnected, { coin: this.getCoin() });
     }
-
 
     protected get currentBlockTime(): number {
         return this._currentBlockTime || 0;
     }
-
 
     protected blockTracker = async () => {
         try {
@@ -61,11 +63,10 @@ export class EthereumCoinTracker extends AbstractTracker {
             if (error.blockNumber) {
                 return;
             }
-
+            
             throw error;
         }
     };
-
 
     protected async trackLastOrNextBlock(): Promise<Infura.Block> {
         let blockHeight: Infura.BlockNumber = 'latest';
@@ -76,14 +77,12 @@ export class EthereumCoinTracker extends AbstractTracker {
         return this.client.getBlock(blockHeight);
     }
 
-
-    protected setCurrentBlock = (block: Infura.Block) => {
+    protected setCurrentBlock(block: Infura.Block): void {
         this._currentBlockHeight = Utils.hexToBigNumber(block.number).toNumber();
         this._currentBlockTime = Utils.hexToBigNumber(block.timestamp).times(1000).toNumber();
-    };
+    }
 
-
-    protected onHandleTx = (tx: Infura.Transaction) => {
+    protected onHandleTx(tx: Infura.Transaction): void {
         const addresses = [];
         let estimatedAmount = new BigNumber(0);
 
@@ -98,21 +97,22 @@ export class EthereumCoinTracker extends AbstractTracker {
         }
 
         if (addresses.length > 0) {
-            this.emitTransactionListener(tx.hash, addresses, tx);
-
             TransactionProvider.newTransaction(
                 this.coin,
                 tx.hash,
                 estimatedAmount.div(Constants.WEI_PER_COIN).toNumber(),
             );
+
+            if (estimatedAmount.gt(0)) {
+                this.emitTransactionListener(tx.hash, addresses, tx);
+            }
         }
-    };
+    }
 
-
-    protected onHandleBlock = (block: Infura.Block) => {
+    protected onHandleBlock(block: Infura.Block): void {
         this.setCurrentBlock(block);
 
-        EventEmmiter.emit(Events.NewBlock, {
+        EventEmitter.emit(Events.NewBlock, {
             block: block,
             blockData: {
                 hash: block.hash,
@@ -125,5 +125,5 @@ export class EthereumCoinTracker extends AbstractTracker {
         block.transactions.forEach((tx: Infura.Transaction) => {
             this.onHandleTx(tx);
         });
-    };
+    }
 }
