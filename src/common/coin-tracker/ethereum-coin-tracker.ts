@@ -1,5 +1,5 @@
-import { Coin, Constants, Utils } from '@plark/wallet-core';
 import BigNumber from 'bignumber.js';
+import { Coin, Constants, Utils } from '@plark/wallet-core';
 import { AbstractTracker } from './abstract-tracker';
 import { InfuraClient } from './explorer-clients';
 import EventEmitter, { Events } from 'common/events';
@@ -63,7 +63,7 @@ export class EthereumCoinTracker extends AbstractTracker {
             if (error.blockNumber) {
                 return;
             }
-            
+
             throw error;
         }
     };
@@ -88,7 +88,9 @@ export class EthereumCoinTracker extends AbstractTracker {
 
         if (this.addresses.indexOf(tx.from) >= 0) {
             addresses.push(tx.from);
-            estimatedAmount = estimatedAmount.minus(tx.value);
+            estimatedAmount = estimatedAmount
+                .minus(tx.value)
+                .minus(new BigNumber(tx.gasPrice).times(tx.gas));
         }
 
         if (this.addresses.indexOf(tx.to) >= 0) {

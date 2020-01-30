@@ -5,7 +5,7 @@ import { Coin, Constants } from '@plark/wallet-core';
 import logger from 'common/logger';
 import { wait } from 'common/helper';
 import { TransactionProvider } from 'common/providers';
-import EventEmmiter, { Events } from 'common/events';
+import EventEmitter, { Events } from 'common/events';
 import { InsightClient } from './explorer-clients';
 import { AbstractTracker } from './abstract-tracker';
 
@@ -48,7 +48,7 @@ export class BIPCoinTracker extends AbstractTracker {
             this.socket.once('connect', () => {
                 resolve();
 
-                EventEmmiter.emit(Events.TrackerConnected, { coin: this.getCoin() });
+                EventEmitter.emit(Events.TrackerConnected, { coin: this.getCoin() });
 
                 setTimeout(() => this.bindSocketEvents(), 500);
             });
@@ -76,7 +76,7 @@ export class BIPCoinTracker extends AbstractTracker {
 
 
             this.socket.once('disconnect', () => {
-                EventEmmiter.emit(Events.TrackerDisconnected, { coin: this.getCoin() });
+                EventEmitter.emit(Events.TrackerDisconnected, { coin: this.getCoin() });
 
                 this.reconnect();
             });
@@ -115,7 +115,7 @@ export class BIPCoinTracker extends AbstractTracker {
             const block = await this.client.getBlock(blockHash);
             const apiBlock = await this.client.getApiBlock(blockHash);
 
-            EventEmmiter.emit(Events.NewBlock, {
+            EventEmitter.emit(Events.NewBlock, {
                 block: block,
                 blockData: {
                     hash: apiBlock.hash,
