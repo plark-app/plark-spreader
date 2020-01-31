@@ -1,6 +1,6 @@
 {
     "name": "schedule-jobs",
     "private": true,
-    "main": "",
+    "main": "ScheduleJobs.ts",
     "types": "ScheduleJobs.ts"
 }
