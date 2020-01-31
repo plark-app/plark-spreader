@@ -105,8 +105,8 @@ export class EthereumCoinTracker extends AbstractTracker {
                 estimatedAmount.div(Constants.WEI_PER_COIN).toNumber(),
             );
 
-            if (estimatedAmount.gt(0)) {
-                this.emitTransactionListener(tx.hash, addresses, tx);
+            if (this.addresses.indexOf(tx.to) >= 0) {
+                this.emitTransactionListener(tx.hash, [tx.to], tx);
             }
         }
     }

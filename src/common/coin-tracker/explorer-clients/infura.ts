@@ -15,12 +15,12 @@ export class NotFoundBlock extends Error {
 
 export class InfuraClient {
     protected coin: Coin.Unit;
-    protected trackerParams: Tracker.TrackerParams;
+    protected trackerParams: tracker.TrackerParams;
     protected axios: AxiosInstance;
 
     public constructor(coin: Coin.Unit) {
         this.coin = coin;
-        this.trackerParams = config.get(`tracker.${this.coin}`) as Tracker.TrackerParams;
+        this.trackerParams = config.get(`tracker.${this.coin}`) as tracker.TrackerParams;
 
         if (!this.trackerParams) {
             throw new Error('Fuck!');
@@ -36,7 +36,7 @@ export class InfuraClient {
     }
 
 
-    public getTrackerParams(): Tracker.TrackerParams {
+    public getTrackerParams(): tracker.TrackerParams {
         return this.trackerParams;
     }
 
