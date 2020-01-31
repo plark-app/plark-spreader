@@ -1,6 +1,6 @@
 {
     "name": "plark-spreader",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Plark Spreader notification",
     "private": true,
     "author": "Plark <info@plark.io>",

@@ -28,9 +28,9 @@ done
 build_docker()
 {
     docker build \
-    --file ./Dockerfile \
-    --tag plark/plark-spreader:$APPLICATION_VERSION \
-    --tag plark/plark-spreader .
+        --file ./Dockerfile \
+        --tag plark/plark-spreader:$APPLICATION_VERSION \
+        --tag plark/plark-spreader .
 
     # end of build_docker
 }
