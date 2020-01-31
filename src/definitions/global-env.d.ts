@@ -20,7 +20,7 @@ declare global {
 
     type TrackerConfigUnit = {
         tracker: {
-            [coin: string]: Tracker.TrackerParams;
+            [coin: string]: tracker.TrackerParams;
         }
     };
 
@@ -43,11 +43,17 @@ declare global {
 
     type AnyFunc = (...args: any[]) => any;
 
-    declare namespace Tracker {
+    declare namespace tracker {
         type TrackerParams = {
             type: 'insight' | 'infura';
             apiUrl: string;
             webSocket?: string;
+        };
+
+        type TransactionAddressChange = {
+            addr: string;
+            amount: number;
+            type: 'input' | 'output';
         };
     }
 }

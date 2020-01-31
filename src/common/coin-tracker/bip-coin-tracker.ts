@@ -1,7 +1,7 @@
 import BitcoinJS from 'bitcoinjs-lib';
 import SocketClient from 'socket.io-client';
 import BigNumber from 'bignumber.js';
-import { Coin, Constants } from '@plark/wallet-core';
+import { Coin, Constants, Networking } from '@plark/wallet-core';
 import logger from 'common/logger';
 import { wait } from 'common/helper';
 import { TransactionProvider } from 'common/providers';
@@ -112,8 +112,8 @@ export class BIPCoinTracker extends AbstractTracker {
 
     protected onHandleBlock = async (blockHash: string) => {
         try {
-            const block = await this.client.getBlock(blockHash);
-            const apiBlock = await this.client.getApiBlock(blockHash);
+            const block = await this.client.fetchBlock(blockHash);
+            const apiBlock = await this.client.fetchApiBlock(blockHash);
 
             EventEmitter.emit(Events.NewBlock, {
                 block: block,
@@ -137,7 +137,7 @@ export class BIPCoinTracker extends AbstractTracker {
         const handledAddresses: string[] = [];
         let estimatedAmount = new BigNumber(0);
 
-        this.getAddresses(tx).forEach((data: { addr: string; amount: number; }) => {
+        this.getOutputAddresses(tx).forEach((data: tracker.TransactionAddressChange) => {
             if (this.addresses.indexOf(data.addr) >= 0) {
                 handledAddresses.push(data.addr);
                 estimatedAmount = estimatedAmount.plus(data.amount);
@@ -145,7 +145,23 @@ export class BIPCoinTracker extends AbstractTracker {
         });
 
         if (handledAddresses.length > 0) {
-            this.emitTransactionListener(tx.txid, handledAddresses);
+            try {
+                const fullTX = await this.client.fetchTransaction(tx.txid, 1);
+
+                this.getInputAddresses(fullTX).forEach((data: tracker.TransactionAddressChange) => {
+                    if (this.addresses.indexOf(data.addr) >= 0) {
+                        handledAddresses.push(data.addr);
+                        estimatedAmount = estimatedAmount.minus(data.amount);
+                    }
+                });
+            } catch (error) {
+                logger.error(error.message);
+            }
+
+            if (estimatedAmount.gte(0)) {
+                this.emitTransactionListener(tx.txid, handledAddresses);
+            }
+
             TransactionProvider.newTransaction(
                 this.coin,
                 tx.txid,
@@ -155,11 +171,38 @@ export class BIPCoinTracker extends AbstractTracker {
     };
 
 
-    protected getAddresses(tx: Insight.InsightEventTransaction): Array<{ addr: string; amount: number; }> {
-        return tx.vout.map((obj: any) => {
+    protected getOutputAddresses(tx: Insight.InsightEventTransaction): Array<tracker.TransactionAddressChange> {
+        const response: Array<tracker.TransactionAddressChange> = [];
+
+        tx.vout.forEach((obj: any) => {
             const addr = Object.keys(obj)[0];
 
-            return { addr: addr, amount: obj[addr] || 0 };
+            response.push({
+                addr: addr,
+                amount: new BigNumber(obj[addr] || 0).toNumber(),
+                type: 'output',
+            });
         });
+
+        return response;
+    }
+
+
+    protected getInputAddresses(tx: Networking.Api.Insight.Transaction): Array<tracker.TransactionAddressChange> {
+        const response: Array<tracker.TransactionAddressChange> = [];
+
+        tx.vin.forEach((obj: Networking.Api.Insight.Input) => {
+            if (!obj.addr) {
+                return;
+            }
+
+            response.push({
+                addr: obj.addr,
+                amount: obj.valueSat,
+                type: 'input',
+            });
+        });
+
+        return response;
     }
 }
