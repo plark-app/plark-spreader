@@ -1,12 +1,23 @@
 import express from 'express';
 import crypto from 'crypto';
+import Validator from 'validatorjs';
 import config from 'config';
 import { fetchBody } from 'common/helper';
-import { HttpError } from 'common/http-errors';
+import { HttpError, ValidationError } from 'common/http-errors';
 
 export default async function postIntercomSign(req: express.Request, res: express.Response, _next: AnyFunc) {
 
     const data = fetchBody(req);
+
+    let rules = {
+        seed_id: ['required'],
+    };
+
+    const validation = new Validator(data, rules);
+    if (validation.fails()) {
+        return _next(new ValidationError(validation.errors.all()));
+    }
+
     const { seed_id, platform = 'ios' } = data;
 
     const key = config.get<string>(`intercom.secrets.${platform}`);
