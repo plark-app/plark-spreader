@@ -1,20 +1,20 @@
 import express from 'express';
-
 import Validator from 'validatorjs';
 import { ValidationError } from 'common/http-errors';
 import { UserProvider, PlatformProvider } from 'common/providers';
 import { EventEmitter } from 'events';
 import { Events } from 'common/events';
+import { fetchBody } from 'common/helper';
 
 export default function delete_Unsubscribe(eventEmitter: EventEmitter) {
     return async (req: express.Request, res: express.Response, _next: AnyFunc) => {
 
-        const data = req.body;
+        const data = fetchBody(req);
         const userToken: string = req.params.user_token;
 
         let rules = {
             coin: ['required'],
-            platform_token: ['required', 'min:8'],
+            fcm_token: ['required', 'min:8'],
         };
 
         const validation = new Validator(data, rules);
@@ -24,7 +24,7 @@ export default function delete_Unsubscribe(eventEmitter: EventEmitter) {
         }
 
         const user = await UserProvider.getUser(userToken);
-        const platform = await PlatformProvider.findUserPlatform(user, data.platform_token);
+        const platform = await PlatformProvider.findUserPlatform(user, data.fcm_token);
 
         if (!platform) {
             res.status(204).send();
