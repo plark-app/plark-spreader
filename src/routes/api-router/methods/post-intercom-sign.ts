@@ -10,7 +10,7 @@ export default async function postIntercomSign(req: express.Request, res: expres
     const { seed_id, platform = 'ios' } = data;
 
     const key = config.get<string>(`intercom.secrets.${platform}`);
-    if (!key) {
+    if (!key || key.length < 1) {
         return _next(new HttpError(`Platform ${platform} is not configured.`, 400));
     }
 
