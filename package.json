@@ -27,7 +27,7 @@
         "firebase": "5.9.0",
         "firebase-admin": "7.1.0",
         "intel": "1.2.0",
-        "js-yaml": "3.12.0",
+        "js-yaml": "3.13.1",
         "logform": "2.1.2",
         "mkdirp-sync": "0.0.3",
         "moment": "2.24.0",
