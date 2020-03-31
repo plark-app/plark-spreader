@@ -2,3 +2,4 @@ intercom:
   secrets:
     ios: false
     web: false
+    android: false

@@ -12,6 +12,7 @@ ENV DATABASE_PORT=5432
 
 ENV INTERCOM_IOS_SECRET=false
 ENV INTERCOM_WEB_SECRET=false
+ENV INTERCOM_ANDROID_SECRET=false
 
 RUN apk add --no-cache gettext git python g++ make
 
