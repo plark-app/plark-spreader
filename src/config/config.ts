@@ -9,6 +9,7 @@ const configPath = path.resolve(rootPath, './config/');
 config.loadYmlFile(path.resolve(configPath, 'app.yml'));
 config.loadYmlFile(path.resolve(configPath, 'database.yml'));
 config.loadYmlFile(path.resolve(configPath, 'tracker.yml'));
+config.loadYmlFile(path.resolve(configPath, 'intercom.yml'));
 config.loadYmlFile(path.resolve(configPath, 'firebase.yml'));
 
 // Loading .env.yml file from root repository

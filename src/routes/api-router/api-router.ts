@@ -3,8 +3,6 @@ import eventEmitter from 'common/events';
 import bodyParser from 'body-parser';
 import { createLogger } from './logger';
 import { errorHandler } from './error-handler';
-
-
 import * as Methods from './methods';
 
 export default (): express.Router => {
@@ -17,6 +15,8 @@ export default (): express.Router => {
     apiRouter.post('/subscribe/:user_token', Methods.post_Subscribe(eventEmitter));
     apiRouter.delete('/unsubscribe/:user_token', Methods.delete_Unsubscribe(eventEmitter));
     apiRouter.delete('/token-unsubscribe', Methods.delete_TokenUnsubscribe(eventEmitter));
+
+    apiRouter.post('/intercom-sign', Methods.post_IntercomSign);
 
     apiRouter.use(errorHandler);
 

@@ -24,6 +24,15 @@ declare global {
         }
     };
 
+    type IntercomConfigUnit = {
+        intercom: {
+            secrets: {
+                ios?: string;
+                web?: string;
+            }
+        }
+    };
+
     type FirebaseAdminCert = ServiceAccount & {
         [key: string]: string;
     };

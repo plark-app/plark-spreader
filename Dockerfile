@@ -10,6 +10,9 @@ ENV DATABASE_PASSWORD=root
 ENV DATABASE_HOST=localhost
 ENV DATABASE_PORT=5432
 
+ENV INTERCOM_IOS_SECRET=false
+ENV INTERCOM_WEB_SECRET=false
+
 RUN apk add --no-cache gettext git python g++ make
 
 WORKDIR /var/www/
